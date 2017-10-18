@@ -17,7 +17,7 @@ Public Class ctiCalculo
 
         ' dbC.Open()
         cmd.ExecuteNonQuery()
-        cmd.CommandText = "SELECT DISTINCT idchequeo,chec, tipo,incidencia,observaciones FROM vm_ChequeoIncidencia Where chec between '" & Fech1 & "' and '" & Fech2 & "' AND idempleado=@idempleado   ORDER BY chec"
+        cmd.CommandText = "SELECT DISTINCT idchequeo,chec, tipo,incidencia,observaciones FROM vm_ChequeoIncidencia Where chec between '" & Fech1 & "' and '" & Fech2 & "' AND idempleado=@idempleado  ORDER BY chec"
         cmd.Parameters.AddWithValue("idempleado", idempleado)
         Dim rdr As SqlDataReader = cmd.ExecuteReader
         While rdr.Read
