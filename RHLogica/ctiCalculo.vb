@@ -13,7 +13,7 @@ Public Class ctiCalculo
         Dim r As DataRow
         Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()
-        Dim cmd As New SqlCommand("delete from Chequeo where idchequeo in (select a1.idchequeo from Chequeo a1 inner join Chequeo a2 on a1.chec = a2.chec and a1.idchequeo > a2.idchequeo)", dbC)
+        Dim cmd As New SqlCommand("delete from Chequeo where idchequeo in (select a1.idchequeo from Chequeo a1 inner join Chequeo a2 on a1.chec = a2.chec and a1.idchequeo > a2.idchequeo) AND idempleado ='" & idempleado & "'", dbC)
 
         ' dbC.Open()
         cmd.ExecuteNonQuery()
