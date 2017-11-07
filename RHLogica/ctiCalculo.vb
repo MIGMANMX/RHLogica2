@@ -13,7 +13,7 @@ Public Class ctiCalculo
         Dim r As DataRow
         Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()
-        Dim cmd As New SqlCommand("delete from Chequeo where idchequeo in (select a1.idchequeo from Chequeo a1 inner join Chequeo a2 on a1.chec = a2.chec and a1.idchequeo > a2.idchequeo) AND idempleado ='" & idempleado & "'", dbC)
+        Dim cmd As New SqlCommand("delete from Chequeo where  idchequeo in (select a1.idchequeo from Chequeo a1 inner join Chequeo a2 on a1.chec = a2.chec and a1.idchequeo > a2.idchequeo and a1.idempleado = a2.idempleado)", dbC)
 
         ' dbC.Open()
         cmd.ExecuteNonQuery()
@@ -169,6 +169,27 @@ Public Class ctiCalculo
             dsP(2) = rdr("idchequeo").ToString
         Else
             ReDim dsP(0) : dsP(0) = "Error: no se encuentra ."
+        End If
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return dsP
+    End Function
+    '''''Consuta si asistio con Chequeo
+    Public Function ConsultaAsistencia(ByVal idempleado As Integer, ByVal F As Date, ByVal FF As Date) As String()
+        Dim dbC As New SqlConnection(StarTconnStrRH)
+        dbC.Open()
+        Dim cmd As New SqlCommand("Select * From Chequeo where chec  BETWEEN '" & F & "' AND '" & FF & "' AND idempleado=@idempleado AND tipo='Entrada' Order BY chec ", dbC)
+        cmd.Parameters.AddWithValue("idempleado", idempleado)
+
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim dsP As String()
+        If rdr.Read Then
+            ReDim dsP(4)
+            dsP(0) = rdr("idchequeo").ToString
+            dsP(1) = rdr("idempleado").ToString
+            dsP(2) = rdr("chec").ToString
+            dsP(3) = rdr("tipo").ToString
+        Else
+            ReDim dsP(0) : dsP(0) = 0
         End If
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dsP
