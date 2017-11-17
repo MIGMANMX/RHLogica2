@@ -2,35 +2,62 @@
 Public Class ctiCalculo
     'Calculo de Horas
     '''Gridview Chequeo
-    Public Function gvChequeo(ByVal idempleado As Integer, ByVal Fech1 As String, ByVal Fech2 As String, ByVal idincidencia As Integer) As DataTable
+    'Public Function gvChequeo(ByVal idempleado As Integer, ByVal Fech1 As String, ByVal Fech2 As String, ByVal idincidencia As Integer) As DataTable
+    '    Dim dt As New DataTable
+    '    dt.Columns.Add(New DataColumn("idchequeo", System.Type.GetType("System.String")))
+    '    dt.Columns.Add(New DataColumn("chec", System.Type.GetType("System.String")))
+    '    dt.Columns.Add(New DataColumn("tipo", System.Type.GetType("System.String")))
+    '    dt.Columns.Add(New DataColumn("incidencia", System.Type.GetType("System.String")))
+    '    dt.Columns.Add(New DataColumn("observaciones", System.Type.GetType("System.String")))
+
+    '    Dim r As DataRow
+    '    Dim dbC As New SqlConnection(StarTconnStrRH)
+    '    dbC.Open()
+    '    Dim cmd As New SqlCommand("delete from Chequeo where  idchequeo in (select a1.idchequeo from Chequeo a1 inner join Chequeo a2 on a1.chec = a2.chec and a1.idchequeo > a2.idchequeo and a1.idempleado = a2.idempleado)", dbC)
+
+    '    ' dbC.Open()
+    '    cmd.ExecuteNonQuery()
+    '    cmd.CommandText = "SELECT DISTINCT idchequeo,chec, tipo,incidencia,observaciones FROM vm_ChequeoIncidencia Where chec between '" & Fech1 & "' and '" & Fech2 & "' AND idempleado=@idempleado  ORDER BY chec"
+    '    cmd.Parameters.AddWithValue("idempleado", idempleado)
+    '    Dim rdr As SqlDataReader = cmd.ExecuteReader
+    '    While rdr.Read
+    '        r = dt.NewRow
+    '        r(0) = rdr("idchequeo").ToString
+    '        r(1) = rdr("chec").ToString : r(2) = rdr("tipo").ToString
+    '        r(3) = rdr("incidencia").ToString : r(4) = rdr("observaciones").ToString
+    '        dt.Rows.Add(r)
+    '    End While
+    '    rdr.Close() : rdr = Nothing : cmd.Dispose()
+    '    dbC.Close() : dbC.Dispose()
+    '    Return dt
+    'End Function
+    Public Function gvChequeo() As DataTable
         Dim dt As New DataTable
-        dt.Columns.Add(New DataColumn("idchequeo", System.Type.GetType("System.String")))
-        dt.Columns.Add(New DataColumn("chec", System.Type.GetType("System.String")))
-        dt.Columns.Add(New DataColumn("tipo", System.Type.GetType("System.String")))
-        dt.Columns.Add(New DataColumn("incidencia", System.Type.GetType("System.String")))
-        dt.Columns.Add(New DataColumn("observaciones", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("fecha", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("entrada", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("salida", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("hrstrab", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("detalle", System.Type.GetType("System.String")))
 
         Dim r As DataRow
         Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()
-        Dim cmd As New SqlCommand("delete from Chequeo where  idchequeo in (select a1.idchequeo from Chequeo a1 inner join Chequeo a2 on a1.chec = a2.chec and a1.idchequeo > a2.idchequeo and a1.idempleado = a2.idempleado)", dbC)
-
-        ' dbC.Open()
-        cmd.ExecuteNonQuery()
-        cmd.CommandText = "SELECT DISTINCT idchequeo,chec, tipo,incidencia,observaciones FROM vm_ChequeoIncidencia Where chec between '" & Fech1 & "' and '" & Fech2 & "' AND idempleado=@idempleado  ORDER BY chec"
-        cmd.Parameters.AddWithValue("idempleado", idempleado)
+        Dim cmd As New SqlCommand("SELECT Convert(varchar(11),fecha, 13)as fecha,entrada, salida,hrstrab,detalle FROM Temp_Calculo ", dbC)
         Dim rdr As SqlDataReader = cmd.ExecuteReader
         While rdr.Read
             r = dt.NewRow
-            r(0) = rdr("idchequeo").ToString
-            r(1) = rdr("chec").ToString : r(2) = rdr("tipo").ToString
-            r(3) = rdr("incidencia").ToString : r(4) = rdr("observaciones").ToString
+            r(0) = rdr("fecha").ToString
+            r(1) = rdr("entrada").ToString
+            r(2) = rdr("salida").ToString
+            r(3) = rdr("hrstrab").ToString
+            r(4) = rdr("detalle").ToString
             dt.Rows.Add(r)
         End While
         rdr.Close() : rdr = Nothing : cmd.Dispose()
         dbC.Close() : dbC.Dispose()
         Return dt
     End Function
+
     Public Function datosHora(ByVal idchequeo As Integer) As String()
         Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()

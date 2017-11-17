@@ -61,7 +61,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Busca una cadena traducida similar a Data Source=SISTEMAS3-PC\STAR;Initial Catalog=dbo;Persist Security Info=True;User ID=sa;Password=star.
+        '''  Busca una cadena traducida similar a Data Source=localhost;Initial Catalog=dbo;Persist Security Info=True;User ID=sa;Password=Star1234.
         '''</summary>
         Friend ReadOnly Property ConDbo() As String
             Get
@@ -70,7 +70,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Busca una cadena traducida similar a Data Source=SISTEMAS3-PC\STAR;Initial Catalog=nomRH;Persist Security Info=True;User ID=sa;Password=star.
+        '''  Busca una cadena traducida similar a Data Source=localhost;Initial Catalog=nomRH;Persist Security Info=True;User ID=sa;Password=Star1234.
         '''</summary>
         Friend ReadOnly Property ConRh() As String
             Get
