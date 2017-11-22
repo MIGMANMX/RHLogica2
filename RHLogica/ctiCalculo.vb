@@ -34,21 +34,21 @@ Public Class ctiCalculo
     Public Function gvChequeo() As DataTable
         Dim dt As New DataTable
         dt.Columns.Add(New DataColumn("fecha", System.Type.GetType("System.String")))
-        dt.Columns.Add(New DataColumn("entrada", System.Type.GetType("System.String")))
-        dt.Columns.Add(New DataColumn("salida", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("clockin", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("clockout", System.Type.GetType("System.String")))
         dt.Columns.Add(New DataColumn("hrstrab", System.Type.GetType("System.String")))
         dt.Columns.Add(New DataColumn("detalle", System.Type.GetType("System.String")))
 
         Dim r As DataRow
         Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()
-        Dim cmd As New SqlCommand("SELECT Convert(varchar(11),fecha, 13)as fecha,entrada, salida,hrstrab,detalle FROM Temp_Calculo ", dbC)
+        Dim cmd As New SqlCommand("SELECT Convert(varchar(11),fecha, 13)as fecha,clockin, clockout,hrstrab,detalle FROM Temp_Calculo ", dbC)
         Dim rdr As SqlDataReader = cmd.ExecuteReader
         While rdr.Read
             r = dt.NewRow
             r(0) = rdr("fecha").ToString
-            r(1) = rdr("entrada").ToString
-            r(2) = rdr("salida").ToString
+            r(1) = rdr("clockin").ToString
+            r(2) = rdr("clockout").ToString
             r(3) = rdr("hrstrab").ToString
             r(4) = rdr("detalle").ToString
             dt.Rows.Add(r)
@@ -201,7 +201,7 @@ Public Class ctiCalculo
         Return dsP
     End Function
     '''''Consuta si asistio con Chequeo
-    Public Function ConsultaAsistencia(ByVal idempleado As Integer, ByVal F As Date, ByVal FF As Date) As String()
+    Public Function ConsultaAsistencia(ByVal idempleado As Integer, ByVal F As String, ByVal FF As String) As String()
         Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()
         Dim cmd As New SqlCommand("Select * From Chequeo where chec  BETWEEN '" & F & "' AND '" & FF & "' AND idempleado=@idempleado AND tipo='Entrada' Order BY chec ", dbC)
