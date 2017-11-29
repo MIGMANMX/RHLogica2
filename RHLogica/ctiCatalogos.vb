@@ -1,6 +1,139 @@
 ﻿Imports System.Data.SqlClient
 
 Public Class ctiCatalogos
+    '''''Salarios
+    Public Function datosSalarios(ByVal idsalario As Integer) As String()
+        Dim dbC As New SqlConnection(StarTconnStrRH)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT * FROM Salarios WHERE idsalario = @idsalario", dbC)
+        cmd.Parameters.AddWithValue("idsalario", idsalario)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim dsP As String()
+        If rdr.Read Then
+            ReDim dsP(5)
+            dsP(0) = rdr("idsalario").ToString
+            dsP(1) = rdr("idpuesto").ToString
+            dsP(2) = rdr("hora").ToString
+            dsP(3) = rdr("extra").ToString
+            dsP(4) = rdr("extratiple").ToString
+
+        Else
+            ReDim dsP(1) : dsP(1) = "Error: no se encuentra."
+        End If
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return dsP
+    End Function
+    Public Function agregarSalario(ByVal idpuesto As Integer, ByVal hora As Integer, ByVal extra As Integer, ByVal extratiple As Integer) As String()
+        Dim ans() As String
+        If idpuesto <> 0 Then
+            Dim dbC As New SqlConnection(StarTconnStrRH)
+            dbC.Open()
+            Dim cmd As New SqlCommand("SELECT idsalario FROM Salarios WHERE idpuesto = @idpuesto", dbC)
+            cmd.Parameters.AddWithValue("idpuesto", idpuesto)
+            Dim rdr As SqlDataReader = cmd.ExecuteReader
+            If rdr.HasRows Then
+                ReDim ans(0)
+                ans(0) = "Error: no se puede agregar, ya existe el dato."
+                rdr.Close()
+            Else
+                rdr.Close()
+                cmd.CommandText = "INSERT INTO Salarios SELECT @idpuesto,@hora,@extra,@extratiple"
+
+                cmd.Parameters.AddWithValue("hora", hora)
+                cmd.Parameters.AddWithValue("extra", extra)
+                cmd.Parameters.AddWithValue("extratiple", extratiple)
+
+                cmd.ExecuteNonQuery()
+                cmd.CommandText = "SELECT idsalario FROM Salarios WHERE idpuesto = @idpuesto"
+                rdr = cmd.ExecuteReader
+                rdr.Read()
+                ReDim ans(1)
+                ans(0) = "Agregado."
+                ans(1) = rdr("idsalario").ToString
+                rdr.Close()
+            End If
+            rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Else
+            ReDim ans(0)
+            ans(0) = "Error: no se puede agregar, es necesario capturar."
+        End If
+        Return ans
+    End Function
+    Public Function actualizarSalario(ByVal idsalario As Integer, ByVal idpuesto As Integer, ByVal hora As Integer, ByVal extra As Integer, ByVal extratiple As Integer) As String
+        Dim err As String
+        If idpuesto = 0 Then
+            err = "Error: no se actualizó, es necesario capturar."
+        Else
+            Dim dbC As New SqlConnection(StarTconnStrRH)
+            dbC.Open()
+
+            Dim cmd As New SqlCommand("SELECT idsalario FROM Salarios WHERE idpuesto = @idpuesto", dbC)
+            cmd.Parameters.AddWithValue("idpuesto", idpuesto)
+
+            Dim rdr As SqlDataReader = cmd.ExecuteReader
+            If rdr.HasRows Then
+                rdr.Close()
+                err = "Error: no se actualizó, ya existe este nombre."
+            Else
+                rdr.Close()
+                cmd.CommandText = "UPDATE Jornada SET idpuesto = @idpuesto, hora = @hora, extra = @extra, extratiple = @extratiple WHERE idsalario = @idsalario"
+                cmd.Parameters.AddWithValue("hora", hora)
+                cmd.Parameters.AddWithValue("extra", extra)
+                cmd.Parameters.AddWithValue("extratiple", extratiple)
+
+                cmd.ExecuteNonQuery()
+                err = "Datos actualizados."
+            End If
+            rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        End If
+        Return err
+    End Function
+    Public Function eliminarSalario(ByVal idsalario As Integer) As String
+        Dim dbC As New SqlConnection(StarTconnStrRH)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idsalario FROM Salarios WHERE idsalario = @idsalario", dbC)
+        cmd.Parameters.AddWithValue("idsalario", idsalario)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim err As String
+        If rdr.HasRows Then
+            err = "Error: no se puede eliminar."
+            rdr.Close()
+        Else
+            rdr.Close()
+            cmd.CommandText = "DELETE FROM Salarios WHERE idsalario = @idsalario"
+            cmd.ExecuteNonQuery()
+            err = "Eliminado."
+        End If
+        rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return err
+    End Function
+    Public Function gvSalario() As DataTable
+        Dim dt As New DataTable
+        dt.Columns.Add(New DataColumn("idsalario", System.Type.GetType("System.Int32")))
+        dt.Columns.Add(New DataColumn("idpuesto", System.Type.GetType("System.Int32")))
+        dt.Columns.Add(New DataColumn("hora", System.Type.GetType("System.Int32")))
+        dt.Columns.Add(New DataColumn("extra", System.Type.GetType("System.Int32")))
+        dt.Columns.Add(New DataColumn("extratiple", System.Type.GetType("System.Int32")))
+
+        Dim r As DataRow
+        Dim dbC As New SqlConnection(StarTconnStrRH)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idsalario,idpuesto,hora,extra,extratiple FROM Salarios  ORDER BY idpuesto", dbC)
+        'cmd.Parameters.AddWithValue("idjornada", idjornada)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        While rdr.Read
+            r = dt.NewRow
+            r(0) = rdr("idsalario").ToString
+            r(1) = rdr("idpuesto").ToString
+            r(2) = rdr("hora").ToString
+            r(3) = rdr("extra").ToString
+            r(4) = rdr("extratiple").ToString
+
+            dt.Rows.Add(r)
+        End While
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return dt
+    End Function
     '''''Puestos
     Public Function datosPuesto(ByVal idpuesto As Integer) As String()
         Dim dbC As New SqlConnection(StarTconnStr)
@@ -49,7 +182,7 @@ Public Class ctiCatalogos
         End If
         Return ans
     End Function
-    Public Function actualizarPuesto(ByVal idpuesto As Integer, _
+    Public Function actualizarPuesto(ByVal idpuesto As Integer,
                                      ByVal puesto As String) As String
         Dim err As String
         If puesto = "" Then
@@ -308,9 +441,9 @@ Public Class ctiCatalogos
         Dim err As String
 
         rdr.Close()
-            cmd.CommandText = "DELETE FROM Incidencia WHERE idincidencia = @idincidencia"
-            cmd.ExecuteNonQuery()
-            err = "Incidencia eliminado."
+        cmd.CommandText = "DELETE FROM Incidencia WHERE idincidencia = @idincidencia"
+        cmd.ExecuteNonQuery()
+        err = "Incidencia eliminado."
 
         rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return err
@@ -396,9 +529,9 @@ Public Class ctiCatalogos
         '    err = "Error: no se actualizó, es necesario capturar."
         'Else
         Dim dbC As New SqlConnection(StarTconnStrRH)
-            dbC.Open()
-            Dim cmd As New SqlCommand("SELECT iddetalle_incidencia FROM Detalle_incidencias  WHERE fecha = @fecha AND idempleado = @idempleado", dbC)
-            cmd.Parameters.AddWithValue("iddetalle_incidencia", iddetalle_incidencia)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT iddetalle_incidencia FROM Detalle_incidencias  WHERE fecha = @fecha AND idempleado = @idempleado", dbC)
+        cmd.Parameters.AddWithValue("iddetalle_incidencia", iddetalle_incidencia)
         cmd.Parameters.AddWithValue("idempleado", idempleado)
         cmd.Parameters.AddWithValue("idincidencia", idincidencia)
         cmd.Parameters.AddWithValue("observaciones", observaciones)
@@ -406,9 +539,9 @@ Public Class ctiCatalogos
         Dim rdr As SqlDataReader = cmd.ExecuteReader
 
         rdr.Close()
-                cmd.CommandText = "UPDATE Detalle_incidencias SET idincidencia = @idincidencia, idempleado = @idempleado, fecha = @fecha, observaciones = @observaciones  WHERE iddetalle_incidencia = @iddetalle_incidencia"
-                cmd.ExecuteNonQuery()
-                err = "Datos de incidencia actualizados."
+        cmd.CommandText = "UPDATE Detalle_incidencias SET idincidencia = @idincidencia, idempleado = @idempleado, fecha = @fecha, observaciones = @observaciones  WHERE iddetalle_incidencia = @iddetalle_incidencia"
+        cmd.ExecuteNonQuery()
+        err = "Datos de incidencia actualizados."
 
         rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         'End If
@@ -493,10 +626,10 @@ Public Class ctiCatalogos
         Return dsP
 
     End Function
-    Public Function agregarUsuario(ByVal nombre As String, _
-                                   ByVal usuario As String, _
-                                   ByVal clave As String, _
-                                   ByVal nivel As Integer, _
+    Public Function agregarUsuario(ByVal nombre As String,
+                                   ByVal usuario As String,
+                                   ByVal clave As String,
+                                   ByVal nivel As Integer,
                                    ByVal idSucursal As Integer) As String()
         Dim au() As String
         If nombre <> "" And usuario <> "" And clave <> "" Then
@@ -546,11 +679,11 @@ Public Class ctiCatalogos
         End If
         Return au
     End Function
-    Public Function actualizarUsuario(ByVal idUsuario As Integer, _
-                                      ByVal nombre As String, _
-                                      ByVal usuario As String, _
-                                      ByVal clave As String, _
-                                      ByVal nivel As Integer, _
+    Public Function actualizarUsuario(ByVal idUsuario As Integer,
+                                      ByVal nombre As String,
+                                      ByVal usuario As String,
+                                      ByVal clave As String,
+                                      ByVal nivel As Integer,
                                       ByVal idSucursal As Integer) As String
         Dim aci As String
         If nombre <> "" And usuario <> "" And clave <> "" Then
