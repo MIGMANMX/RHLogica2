@@ -110,7 +110,7 @@ Public Class ctiCatalogos
     Public Function gvSalario() As DataTable
         Dim dt As New DataTable
         dt.Columns.Add(New DataColumn("idsalario", System.Type.GetType("System.Int32")))
-        dt.Columns.Add(New DataColumn("idpuesto", System.Type.GetType("System.Int32")))
+        dt.Columns.Add(New DataColumn("puesto", System.Type.GetType("System.String")))
         dt.Columns.Add(New DataColumn("hora", System.Type.GetType("System.Int32")))
         dt.Columns.Add(New DataColumn("extra", System.Type.GetType("System.Int32")))
         dt.Columns.Add(New DataColumn("extratiple", System.Type.GetType("System.Int32")))
@@ -118,13 +118,13 @@ Public Class ctiCatalogos
         Dim r As DataRow
         Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()
-        Dim cmd As New SqlCommand("SELECT idsalario,idpuesto,hora,extra,extratiple FROM Salarios  ORDER BY idpuesto", dbC)
+        Dim cmd As New SqlCommand("SELECT idsalario,puesto,hora,extra,extratiple FROM vm_Salarios  ORDER BY puesto", dbC)
         'cmd.Parameters.AddWithValue("idjornada", idjornada)
         Dim rdr As SqlDataReader = cmd.ExecuteReader
         While rdr.Read
             r = dt.NewRow
             r(0) = rdr("idsalario").ToString
-            r(1) = rdr("idpuesto").ToString
+            r(1) = rdr("puesto").ToString
             r(2) = rdr("hora").ToString
             r(3) = rdr("extra").ToString
             r(4) = rdr("extratiple").ToString
