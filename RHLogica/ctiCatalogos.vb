@@ -243,7 +243,6 @@ Public Class ctiCatalogos
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dt
     End Function
-
     '''''DiaFestivo
     Public Function datosDiaFestivo(ByVal idfestivos As Integer) As String()
         Dim dbC As New SqlConnection(StarTconnStrRH)
@@ -355,7 +354,6 @@ Public Class ctiCatalogos
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dt
     End Function
-
     '''''Incidencias
     Public Function datosIncidencias(ByVal idincidencia As Integer) As String()
         Dim dbC As New SqlConnection(StarTconnStrRH)
@@ -466,7 +464,6 @@ Public Class ctiCatalogos
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dt
     End Function
-
     '''''AsignarIncidencias
     Public Function datosAsigIncidencias(ByVal iddetalle_incidencia As Integer) As String()
         Dim dbC As New SqlConnection(StarTconnStrRH)
@@ -584,8 +581,6 @@ Public Class ctiCatalogos
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dt
     End Function
-
-
     ''''''''''Usuarios
     Public Function datosUsuario(ByVal idUsuario As Integer) As String()
         Dim dbC As New SqlConnection(StarTconnStr)
@@ -758,7 +753,6 @@ Public Class ctiCatalogos
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dt
     End Function
-
     'Empleados
     Public Function datosEmpleado(ByVal idEmpleado As Integer) As String()
         Dim dbC As New SqlConnection(StarTconnStr)
@@ -1040,7 +1034,6 @@ Public Class ctiCatalogos
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dt
     End Function
-
     'Empleados/Sucursales
     Public Function datosEmpleSuc(ByVal sucursal As String) As String()
         Dim dbC As New SqlConnection(StarTconnStr)
@@ -1059,7 +1052,6 @@ Public Class ctiCatalogos
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dsP
     End Function
-
     'Partida/Jornada
     Public Function datosPartidaJornada(ByVal idempleado As Integer, ByVal fecha As String) As String()
         Dim dbC As New SqlConnection(StarTconnStrRH)
