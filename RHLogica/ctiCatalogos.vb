@@ -10,26 +10,30 @@ Public Class ctiCatalogos
         Dim rdr As SqlDataReader = cmd.ExecuteReader
         Dim dsP As String()
         If rdr.Read Then
-            ReDim dsP(5)
+            ReDim dsP(9)
             dsP(0) = rdr("idsalario").ToString
             dsP(1) = rdr("idpuesto").ToString
             dsP(2) = rdr("hora").ToString
             dsP(3) = rdr("extra").ToString
             dsP(4) = rdr("extratiple").ToString
-
+            dsP(5) = rdr("idsucursal").ToString
+            dsP(6) = rdr("diafestivo").ToString
+            dsP(7) = rdr("diadescanso").ToString
+            dsP(8) = rdr("primadominical").ToString
         Else
             ReDim dsP(1) : dsP(1) = "Error: no se encuentra."
         End If
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dsP
     End Function
-    Public Function agregarSalario(ByVal idpuesto As Integer, ByVal hora As Integer, ByVal extra As Integer, ByVal extratiple As Integer) As String()
+    Public Function agregarSalario(ByVal idpuesto As Integer, ByVal hora As Integer, ByVal extra As Integer, ByVal extratiple As Integer, ByVal idsucursal As Integer, ByVal diafestivo As Integer, ByVal diadescanso As Integer, ByVal primadominical As Integer) As String()
         Dim ans() As String
         If idpuesto <> 0 Then
             Dim dbC As New SqlConnection(StarTconnStrRH)
             dbC.Open()
-            Dim cmd As New SqlCommand("SELECT idsalario FROM Salarios WHERE idpuesto = @idpuesto", dbC)
+            Dim cmd As New SqlCommand("SELECT idsalario FROM Salarios WHERE idpuesto = @idpuesto AND idsucursal=@idsucursal", dbC)
             cmd.Parameters.AddWithValue("idpuesto", idpuesto)
+            cmd.Parameters.AddWithValue("idsucursal", idsucursal)
             Dim rdr As SqlDataReader = cmd.ExecuteReader
             If rdr.HasRows Then
                 ReDim ans(0)
@@ -37,14 +41,16 @@ Public Class ctiCatalogos
                 rdr.Close()
             Else
                 rdr.Close()
-                cmd.CommandText = "INSERT INTO Salarios SELECT @idpuesto,@hora,@extra,@extratiple"
+                cmd.CommandText = "INSERT INTO Salarios SELECT @idpuesto,@hora,@extra,@extratiple,@idsucursal,@diafestivo,@diadescanso,@primadominical"
 
                 cmd.Parameters.AddWithValue("hora", hora)
                 cmd.Parameters.AddWithValue("extra", extra)
                 cmd.Parameters.AddWithValue("extratiple", extratiple)
-
+                cmd.Parameters.AddWithValue("diafestivo", diafestivo)
+                cmd.Parameters.AddWithValue("diadescanso", diadescanso)
+                cmd.Parameters.AddWithValue("primadominical", primadominical)
                 cmd.ExecuteNonQuery()
-                cmd.CommandText = "SELECT idsalario FROM Salarios WHERE idpuesto = @idpuesto"
+                cmd.CommandText = "SELECT idsalario FROM Salarios WHERE idpuesto = @idpuesto AND idsucursal=@idsucursal"
                 rdr = cmd.ExecuteReader
                 rdr.Read()
                 ReDim ans(1)
@@ -59,7 +65,7 @@ Public Class ctiCatalogos
         End If
         Return ans
     End Function
-    Public Function actualizarSalario(ByVal idsalario As Integer, ByVal idpuesto As Integer, ByVal hora As Integer, ByVal extra As Integer, ByVal extratiple As Integer) As String
+    Public Function actualizarSalario(ByVal idsalario As Integer, ByVal idpuesto As Integer, ByVal hora As Integer, ByVal extra As Integer, ByVal extratiple As Integer, ByVal idsucursal As Integer, ByVal diafestivo As Integer, ByVal diadescanso As Integer, ByVal primadominical As Integer) As String
         Dim err As String
         If idpuesto = 0 Then
             err = "Error: no se actualizó, es necesario capturar."
@@ -67,20 +73,20 @@ Public Class ctiCatalogos
             Dim dbC As New SqlConnection(StarTconnStrRH)
             dbC.Open()
 
-            Dim cmd As New SqlCommand("SELECT idsalario FROM Salarios WHERE idpuesto = @idpuesto", dbC)
+            Dim cmd As New SqlCommand("SELECT idsalario FROM Salarios WHERE idpuesto = @idpuesto AND idsucursal=@idsucursal", dbC)
             cmd.Parameters.AddWithValue("idpuesto", idpuesto)
-
+            cmd.Parameters.AddWithValue("idsucursal", idsucursal)
             Dim rdr As SqlDataReader = cmd.ExecuteReader
             If rdr.HasRows Then
+
                 rdr.Close()
-                err = "Error: no se actualizó, ya existe este nombre."
-            Else
-                rdr.Close()
-                cmd.CommandText = "UPDATE Jornada SET idpuesto = @idpuesto, hora = @hora, extra = @extra, extratiple = @extratiple WHERE idsalario = @idsalario"
+                cmd.CommandText = "UPDATE Jornada SET idpuesto = @idpuesto, hora = @hora, extra = @extra, extratiple = @extratiple ,idsucursal =@idsucursal ,diafestivo = @diafestivo,diadescanso =@diadescanso,primadominical = @primadominical WHERE idsalario = @idsalario"
                 cmd.Parameters.AddWithValue("hora", hora)
                 cmd.Parameters.AddWithValue("extra", extra)
                 cmd.Parameters.AddWithValue("extratiple", extratiple)
-
+                cmd.Parameters.AddWithValue("diafestivo", diafestivo)
+                cmd.Parameters.AddWithValue("diadescanso", diadescanso)
+                cmd.Parameters.AddWithValue("primadominical", primadominical)
                 cmd.ExecuteNonQuery()
                 err = "Datos actualizados."
             End If
@@ -114,11 +120,14 @@ Public Class ctiCatalogos
         dt.Columns.Add(New DataColumn("hora", System.Type.GetType("System.Int32")))
         dt.Columns.Add(New DataColumn("extra", System.Type.GetType("System.Int32")))
         dt.Columns.Add(New DataColumn("extratiple", System.Type.GetType("System.Int32")))
-
+        dt.Columns.Add(New DataColumn("sucursal", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("diafestivo", System.Type.GetType("System.Int32")))
+        dt.Columns.Add(New DataColumn("diadescanso", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("primadominical", System.Type.GetType("System.Int32")))
         Dim r As DataRow
         Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()
-        Dim cmd As New SqlCommand("SELECT idsalario,puesto,hora,extra,extratiple FROM vm_Salarios  ORDER BY puesto", dbC)
+        Dim cmd As New SqlCommand("SELECT idsalario,puesto,hora,extra,extratiple,sucursal,diafestivo,diadescanso,primadominical FROM vm_Salarios  ORDER BY puesto", dbC)
         'cmd.Parameters.AddWithValue("idjornada", idjornada)
         Dim rdr As SqlDataReader = cmd.ExecuteReader
         While rdr.Read
@@ -128,7 +137,10 @@ Public Class ctiCatalogos
             r(2) = rdr("hora").ToString
             r(3) = rdr("extra").ToString
             r(4) = rdr("extratiple").ToString
-
+            r(5) = rdr("sucursal").ToString
+            r(6) = rdr("diafestivo").ToString
+            r(7) = rdr("diadescanso").ToString
+            r(8) = rdr("primadominical").ToString
             dt.Rows.Add(r)
         End While
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
