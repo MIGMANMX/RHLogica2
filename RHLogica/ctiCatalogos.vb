@@ -65,35 +65,31 @@ Public Class ctiCatalogos
         End If
         Return ans
     End Function
-    Public Function actualizarSalario(ByVal idsalario As Integer, ByVal idpuesto As Integer, ByVal hora As Integer, ByVal extra As Integer, ByVal extratiple As Integer, ByVal idsucursal As Integer, ByVal diafestivo As Integer, ByVal diadescanso As Integer, ByVal primadominical As Integer) As String
-        Dim err As String
-        If idpuesto = 0 Then
-            err = "Error: no se actualizó, es necesario capturar."
-        Else
-            Dim dbC As New SqlConnection(StarTconnStrRH)
-            dbC.Open()
+    'Public Function actualizarSalario(ByVal idsalario As Integer, ByVal idpuesto As Integer, ByVal hora As Integer, ByVal extra As Integer, ByVal extratiple As Integer, ByVal idsucursal As Integer, ByVal diafestivo As Integer, ByVal diadescanso As Integer, ByVal primadominical As Integer) As String
+    '    Dim err As String
+    '    If idpuesto = 0 Then
+    '        err = "Error: no se actualizó, es necesario capturar."
+    '    Else
+    '        Dim dbC As New SqlConnection(StarTconnStrRH)
+    '        dbC.Open()
 
-            Dim cmd As New SqlCommand("SELECT idsalario FROM Salarios WHERE idpuesto = @idpuesto AND idsucursal=@idsucursal", dbC)
-            cmd.Parameters.AddWithValue("idpuesto", idpuesto)
-            cmd.Parameters.AddWithValue("idsucursal", idsucursal)
-            Dim rdr As SqlDataReader = cmd.ExecuteReader
-            If rdr.HasRows Then
+    '        Dim cmd As New SqlCommand("UPDATE Salarios SET idpuesto = @idpuesto, hora = @hora, extra = @extra, extratiple = @extratiple ,idsucursal =@idsucursal ,diafestivo = @diafestivo,diadescanso =@diadescanso,primadominical = @primadominical WHERE idsalario = @idsalario", dbC)
+    '        cmd.Parameters.AddWithValue("idpuesto", idpuesto)
+    '        cmd.Parameters.AddWithValue("idsucursal", idsucursal)
+    '        cmd.Parameters.AddWithValue("idsalario", idsalario)
+    '        cmd.Parameters.AddWithValue("hora", hora)
+    '        cmd.Parameters.AddWithValue("extra", extra)
+    '        cmd.Parameters.AddWithValue("extratiple", extratiple)
+    '        cmd.Parameters.AddWithValue("diafestivo", diafestivo)
+    '        cmd.Parameters.AddWithValue("diadescanso", diadescanso)
+    '        cmd.Parameters.AddWithValue("primadominical", primadominical)
+    '        cmd.ExecuteNonQuery()
+    '        err = "Datos actualizados."
 
-                rdr.Close()
-                cmd.CommandText = "UPDATE Jornada SET idpuesto = @idpuesto, hora = @hora, extra = @extra, extratiple = @extratiple ,idsucursal =@idsucursal ,diafestivo = @diafestivo,diadescanso =@diadescanso,primadominical = @primadominical WHERE idsalario = @idsalario"
-                cmd.Parameters.AddWithValue("hora", hora)
-                cmd.Parameters.AddWithValue("extra", extra)
-                cmd.Parameters.AddWithValue("extratiple", extratiple)
-                cmd.Parameters.AddWithValue("diafestivo", diafestivo)
-                cmd.Parameters.AddWithValue("diadescanso", diadescanso)
-                cmd.Parameters.AddWithValue("primadominical", primadominical)
-                cmd.ExecuteNonQuery()
-                err = "Datos actualizados."
-            End If
-            rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
-        End If
-        Return err
-    End Function
+    '        cmd.Dispose() : dbC.Close() : dbC.Dispose()
+    '    End If
+    '    Return err
+    'End Function
     Public Function eliminarSalario(ByVal idsalario As Integer) As String
         Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()
@@ -145,6 +141,31 @@ Public Class ctiCatalogos
         End While
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dt
+    End Function
+    Public Function actualizarSalario(ByVal idsalario As Integer, ByVal idpuesto As Integer, ByVal hora As Integer, ByVal extra As Integer, ByVal extratiple As Integer, ByVal idsucursal As Integer, ByVal diafestivo As Integer, ByVal diadescanso As Integer, ByVal primadominical As Integer) As String
+        Dim err As String
+        If idsalario = 0 Then
+            err = "Error: no se actualizó, es necesario capturar"
+        Else
+            Dim dbC As New SqlConnection(StarTconnStrRH)
+            dbC.Open()
+
+            Dim cmd As New SqlCommand("UPDATE Salarios SET idpuesto = @idpuesto, hora = @hora, extra = @extra, extratiple = @extratiple ,idsucursal =@idsucursal ,diafestivo = @diafestivo,diadescanso =@diadescanso,primadominical = @primadominical WHERE idsalario = @idsalario", dbC)
+            cmd.Parameters.AddWithValue("idpuesto", idpuesto)
+            cmd.Parameters.AddWithValue("idsucursal", idsucursal)
+            cmd.Parameters.AddWithValue("idsalario", idsalario)
+            cmd.Parameters.AddWithValue("hora", hora)
+            cmd.Parameters.AddWithValue("extra", extra)
+            cmd.Parameters.AddWithValue("extratiple", extratiple)
+            cmd.Parameters.AddWithValue("diafestivo", diafestivo)
+            cmd.Parameters.AddWithValue("diadescanso", diadescanso)
+            cmd.Parameters.AddWithValue("primadominical", primadominical)
+            cmd.ExecuteNonQuery()
+            err = "Datos actualizados."
+
+            cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        End If
+        Return err
     End Function
     '''''Puestos
     Public Function datosPuesto(ByVal idpuesto As Integer) As String()
