@@ -68,6 +68,7 @@
     <Compile Include="ctiCalculo.vb" />
     <Compile Include="ctiCalendario.vb" />
     <Compile Include="ctiCatalogos.vb" />
+    <Compile Include="ctiConfiguracion.vb" />
     <Compile Include="ctiStarT.vb" />
     <Compile Include="ctiWUC.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />

@@ -42,7 +42,8 @@ Public Class ctiCalculo
         Dim r As DataRow
         Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()
-        Dim cmd As New SqlCommand("SELECT Convert(varchar(11),fecha, 13)as fecha,clockin, clockout,hrstrab,detalle,horario FROM Temp_Calculo ", dbC)
+        Dim cmd As New SqlCommand("SELECT Convert(varchar(11),fecha, 13)as fecha,clockin, clockout,hrstrab,detalle,horario FROM Temp_Calculo", dbC)
+
         Dim rdr As SqlDataReader = cmd.ExecuteReader
         While rdr.Read
             r = dt.NewRow
@@ -71,6 +72,8 @@ Public Class ctiCalculo
         Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()
         Dim cmd As New SqlCommand("SELECT empleado,Convert(varchar(11),fecha, 13)as fecha,clockin, clockout,hrstrab,detalle,horario FROM Temp_CalculoSucursal  order by empleado asc", dbC)
+        'cmd.Parameters.AddWithValue("FIn", FIn)
+        'cmd.Parameters.AddWithValue("FFn", FFn)
         Dim rdr As SqlDataReader = cmd.ExecuteReader
         While rdr.Read
             r = dt.NewRow
