@@ -33,7 +33,7 @@ Public Class ctiCalculo
     'End Function
     Public Function gvChequeo() As DataTable
         Dim dt As New DataTable
-        dt.Columns.Add(New DataColumn("fecha", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("fecha", System.Type.GetType("System.DateTime")))
         dt.Columns.Add(New DataColumn("clockin", System.Type.GetType("System.String")))
         dt.Columns.Add(New DataColumn("clockout", System.Type.GetType("System.String")))
         dt.Columns.Add(New DataColumn("hrstrab", System.Type.GetType("System.String")))
@@ -42,7 +42,7 @@ Public Class ctiCalculo
         Dim r As DataRow
         Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()
-        Dim cmd As New SqlCommand("SELECT Convert(varchar(11),fecha, 13)as fecha,clockin, clockout,hrstrab,detalle,horario FROM Temp_Calculo", dbC)
+        Dim cmd As New SqlCommand("SELECT  fecha,clockin, clockout,hrstrab,detalle,horario FROM Temp_Calculo order by fecha asc", dbC)
 
         Dim rdr As SqlDataReader = cmd.ExecuteReader
         While rdr.Read
@@ -62,7 +62,7 @@ Public Class ctiCalculo
     Public Function gvCalculoSucursal() As DataTable
         Dim dt As New DataTable
         dt.Columns.Add(New DataColumn("empleado", System.Type.GetType("System.String")))
-        dt.Columns.Add(New DataColumn("fecha", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("fecha", System.Type.GetType("System.DateTime")))
         dt.Columns.Add(New DataColumn("clockin", System.Type.GetType("System.String")))
         dt.Columns.Add(New DataColumn("clockout", System.Type.GetType("System.String")))
         dt.Columns.Add(New DataColumn("hrstrab", System.Type.GetType("System.String")))
@@ -71,7 +71,7 @@ Public Class ctiCalculo
         Dim r As DataRow
         Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()
-        Dim cmd As New SqlCommand("SELECT empleado,Convert(varchar(11),fecha, 13)as fecha,clockin, clockout,hrstrab,detalle,horario FROM Temp_CalculoSucursal  order by empleado asc", dbC)
+        Dim cmd As New SqlCommand("SELECT empleado,fecha,clockin, clockout,hrstrab,detalle,horario FROM Temp_CalculoSucursal where detalle != '' order by empleado asc", dbC)
         'cmd.Parameters.AddWithValue("FIn", FIn)
         'cmd.Parameters.AddWithValue("FFn", FFn)
         Dim rdr As SqlDataReader = cmd.ExecuteReader
