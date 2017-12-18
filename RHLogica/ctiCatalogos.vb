@@ -1107,6 +1107,28 @@ Public Class ctiCatalogos
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dsP
     End Function
+    Public Function datosPartidaJornada2(ByVal idempleado As Integer, ByVal fecha As String) As String()
+        Dim dbC As New SqlConnection(StarTconnStrRH)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idpartidas_jornada,idempleado, idjornada, fecha,completar FROM Partidas_Jornada  WHERE idempleado=@idempleado and fecha=@fecha", dbC)
+        cmd.Parameters.AddWithValue("idempleado", idempleado)
+        cmd.Parameters.AddWithValue("fecha", fecha)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim dsP As String()
+        If rdr.Read Then
+            ReDim dsP(5)
+            dsP(0) = rdr("idpartidas_jornada").ToString
+            dsP(1) = rdr("idempleado").ToString
+            dsP(2) = rdr("idjornada").ToString
+            dsP(3) = rdr("fecha").ToString
+            dsP(4) = rdr("completar").ToString
+
+        Else
+            ReDim dsP(0) : dsP(0) = "Error: no se encuentra."
+        End If
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return dsP
+    End Function
     Public Function agregarPartidaJornada(ByVal idempleado As Integer,
                                    ByVal idjornada As Integer,
                                    ByVal fecha As String) As String()
@@ -1125,8 +1147,9 @@ Public Class ctiCatalogos
                 rdr.Close()
             Else
                 rdr.Close()
-                cmd.CommandText = "INSERT INTO Partidas_Jornada SELECT @idempleado,@idjornada,@fecha"
+                cmd.CommandText = "INSERT INTO Partidas_Jornada SELECT @idempleado,@idjornada,@fecha,@completar"
                 cmd.Parameters.AddWithValue("idjornada", idjornada)
+                cmd.Parameters.AddWithValue("completar", "False")
                 'cmd.Parameters.AddWithValue("idempleado", idempleado)
                 cmd.ExecuteNonQuery()
                 cmd.CommandText = "SELECT idpartidas_jornada FROM Partidas_Jornada WHERE fecha = @fecha"
@@ -1162,7 +1185,7 @@ Public Class ctiCatalogos
         dt.Columns.Add(New DataColumn("inicio", System.Type.GetType("System.String")))
         dt.Columns.Add(New DataColumn("fin", System.Type.GetType("System.String")))
 
-        dt.Columns.Add(New DataColumn("fecha", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("fecha", System.Type.GetType("System.DateTime")))
         Dim r As DataRow
         Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()
@@ -1176,6 +1199,37 @@ Public Class ctiCatalogos
             r(3) = rdr("inicio").ToString
             r(4) = rdr("fin").ToString
             r(5) = rdr("fecha").ToString
+            dt.Rows.Add(r)
+        End While
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return dt
+    End Function
+    Public Function gvPartida_Jornada2(ByVal idempleado As Integer) As DataTable
+        Dim dt As New DataTable
+        dt.Columns.Add(New DataColumn("idpartidas_jornada", System.Type.GetType("System.Int32")))
+        dt.Columns.Add(New DataColumn("idempleado", System.Type.GetType("System.Int32")))
+        dt.Columns.Add(New DataColumn("jornada", System.Type.GetType("System.String")))
+
+        dt.Columns.Add(New DataColumn("inicio", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("fin", System.Type.GetType("System.String")))
+
+        dt.Columns.Add(New DataColumn("fecha", System.Type.GetType("System.DateTime")))
+        dt.Columns.Add(New DataColumn("completar", System.Type.GetType("System.Boolean")))
+
+        Dim r As DataRow
+        Dim dbC As New SqlConnection(StarTconnStrRH)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idpartidas_jornada,jornada,inicio,fin,fecha,completar FROM vw_AHorarioE WHERE idempleado=@idempleado ORDER BY fecha desc", dbC)
+        cmd.Parameters.AddWithValue("idempleado", idempleado)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        While rdr.Read
+            r = dt.NewRow
+            r(0) = rdr("idpartidas_jornada").ToString
+            r(2) = rdr("jornada").ToString
+            r(3) = rdr("inicio").ToString
+            r(4) = rdr("fin").ToString
+            r(5) = rdr("fecha").ToString
+            r(6) = rdr("completar").ToString
             dt.Rows.Add(r)
         End While
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
@@ -1196,10 +1250,42 @@ Public Class ctiCatalogos
             Dim rdr As SqlDataReader = cmd.ExecuteReader
 
             rdr.Close()
-            cmd.CommandText = "UPDATE Partidas_Jornada SET idempleado = @idempleado, idjornada = @idjornada, fecha = @fecha WHERE idpartidas_jornada = @idpartidas_jornada"
+            cmd.CommandText = "UPDATE Partidas_Jornada SET idempleado = @idempleado, idjornada = @idjornada, fecha = @fecha,completar = @completar WHERE idpartidas_jornada = @idpartidas_jornada"
             cmd.Parameters.AddWithValue("idempleado", idempleado)
+            cmd.Parameters.AddWithValue("completar", "False")
             cmd.Parameters.AddWithValue("idjornada", idjornada)
             cmd.Parameters.AddWithValue("fecha", Convert.ToDateTime(fecha))
+            cmd.ExecuteNonQuery()
+            aci = "Datos actualizados."
+
+            rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Else
+            aci = "Error: no se actualizó, es necesario capturar"
+        End If
+        Return aci
+    End Function
+    Public Function actualizarPartidaJornada2(ByVal idpartidas_jornada As Integer,
+                                      ByVal idempleado As Integer,
+                                      ByVal idjornada As Integer,
+                                      ByVal fecha As String,
+                                      ByVal completar As Boolean) As String
+        Dim aci As String
+        aci = ""
+        If Convert.ToInt32(idempleado) > 0 And Convert.ToInt32(idjornada) > 0 Then
+
+            Dim dbC As New SqlConnection(StarTconnStrRH)
+            dbC.Open()
+            Dim cmd As New SqlCommand("SELECT idpartidas_jornada FROM Partidas_Jornada WHERE idpartidas_jornada = @idpartidas_jornada", dbC)
+            cmd.Parameters.AddWithValue("idpartidas_jornada", idpartidas_jornada)
+            Dim rdr As SqlDataReader = cmd.ExecuteReader
+
+            rdr.Close()
+            cmd.CommandText = "UPDATE Partidas_Jornada SET idempleado = @idempleado, idjornada = @idjornada, fecha = @fecha,completar = @completar WHERE idpartidas_jornada = @idpartidas_jornada"
+            cmd.Parameters.AddWithValue("idempleado", idempleado)
+            'cmd.Parameters.AddWithValue("completar", "False")
+            cmd.Parameters.AddWithValue("idjornada", idjornada)
+            cmd.Parameters.AddWithValue("fecha", Convert.ToDateTime(fecha))
+            cmd.Parameters.AddWithValue("completar", completar)
             cmd.ExecuteNonQuery()
             aci = "Datos actualizados."
 

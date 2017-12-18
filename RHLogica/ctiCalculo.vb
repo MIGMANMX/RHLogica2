@@ -71,7 +71,7 @@ Public Class ctiCalculo
         Dim r As DataRow
         Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()
-        Dim cmd As New SqlCommand("SELECT empleado,fecha,clockin, clockout,hrstrab,detalle,horario FROM Temp_CalculoSucursal where detalle != '' order by empleado asc", dbC)
+        Dim cmd As New SqlCommand("SELECT empleado,fecha,clockin, clockout,hrstrab,detalle,horario FROM Temp_CalculoSucursal where detalle != '' order by empleado asc,fecha", dbC)
         'cmd.Parameters.AddWithValue("FIn", FIn)
         'cmd.Parameters.AddWithValue("FFn", FFn)
         Dim rdr As SqlDataReader = cmd.ExecuteReader
