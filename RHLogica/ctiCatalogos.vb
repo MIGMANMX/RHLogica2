@@ -1147,9 +1147,10 @@ Public Class ctiCatalogos
                 rdr.Close()
             Else
                 rdr.Close()
-                cmd.CommandText = "INSERT INTO Partidas_Jornada SELECT @idempleado,@idjornada,@fecha,@completar"
+                cmd.CommandText = "INSERT INTO Partidas_Jornada SELECT @idempleado,@idjornada,@fecha,@completar,@completarfin"
                 cmd.Parameters.AddWithValue("idjornada", idjornada)
                 cmd.Parameters.AddWithValue("completar", "False")
+                cmd.Parameters.AddWithValue("completarfin", "False")
                 'cmd.Parameters.AddWithValue("idempleado", idempleado)
                 cmd.ExecuteNonQuery()
                 cmd.CommandText = "SELECT idpartidas_jornada FROM Partidas_Jornada WHERE fecha = @fecha"
@@ -1251,9 +1252,10 @@ Public Class ctiCatalogos
             Dim rdr As SqlDataReader = cmd.ExecuteReader
 
             rdr.Close()
-            cmd.CommandText = "UPDATE Partidas_Jornada SET idempleado = @idempleado, idjornada = @idjornada, fecha = @fecha,completar = @completar WHERE idpartidas_jornada = @idpartidas_jornada"
+            cmd.CommandText = "UPDATE Partidas_Jornada SET idempleado = @idempleado, idjornada = @idjornada, fecha = @fecha,completar = @completar,completarfin = @completarfin WHERE idpartidas_jornada = @idpartidas_jornada"
             cmd.Parameters.AddWithValue("idempleado", idempleado)
             cmd.Parameters.AddWithValue("completar", "False")
+            cmd.Parameters.AddWithValue("completarfin", "False")
             cmd.Parameters.AddWithValue("idjornada", idjornada)
             cmd.Parameters.AddWithValue("fecha", Convert.ToDateTime(fecha))
             cmd.ExecuteNonQuery()
