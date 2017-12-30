@@ -1110,19 +1110,20 @@ Public Class ctiCatalogos
     Public Function datosPartidaJornada2(ByVal idempleado As Integer, ByVal fecha As String) As String()
         Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()
-        Dim cmd As New SqlCommand("SELECT idpartidas_jornada,idempleado, idjornada, fecha,completar,completarfin FROM Partidas_Jornada  WHERE idempleado=@idempleado and fecha=@fecha", dbC)
+        Dim cmd As New SqlCommand("SELECT idpartidas_jornada,idempleado, idjornada, fecha,completar,completarfin,completarhsal FROM Partidas_Jornada  WHERE idempleado=@idempleado and fecha=@fecha", dbC)
         cmd.Parameters.AddWithValue("idempleado", idempleado)
         cmd.Parameters.AddWithValue("fecha", fecha)
         Dim rdr As SqlDataReader = cmd.ExecuteReader
         Dim dsP As String()
         If rdr.Read Then
-            ReDim dsP(6)
+            ReDim dsP(7)
             dsP(0) = rdr("idpartidas_jornada").ToString
             dsP(1) = rdr("idempleado").ToString
             dsP(2) = rdr("idjornada").ToString
             dsP(3) = rdr("fecha").ToString
             dsP(4) = rdr("completar").ToString
             dsP(5) = rdr("completarfin").ToString
+            dsP(6) = rdr("completarhsal").ToString
         Else
             ReDim dsP(0) : dsP(0) = "Error: no se encuentra."
         End If
@@ -1147,11 +1148,12 @@ Public Class ctiCatalogos
                 rdr.Close()
             Else
                 rdr.Close()
-                cmd.CommandText = "INSERT INTO Partidas_Jornada SELECT @idempleado,@idjornada,@fecha,@completar,@completarfin"
+                cmd.CommandText = "INSERT INTO Partidas_Jornada SELECT @idempleado,@idjornada,@fecha,@completar,@completarfin,@completarhsal"
                 cmd.Parameters.AddWithValue("idjornada", idjornada)
                 cmd.Parameters.AddWithValue("completar", "False")
                 cmd.Parameters.AddWithValue("completarfin", "False")
-                'cmd.Parameters.AddWithValue("idempleado", idempleado)
+                cmd.Parameters.AddWithValue("completarhsal", "False")
+
                 cmd.ExecuteNonQuery()
                 cmd.CommandText = "SELECT idpartidas_jornada FROM Partidas_Jornada WHERE fecha = @fecha"
                 rdr = cmd.ExecuteReader
@@ -1205,7 +1207,7 @@ Public Class ctiCatalogos
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dt
     End Function
-    Public Function gvPartida_Jornada2(ByVal idempleado As Integer) As DataTable
+    Public Function gvPartida_Jornada2(ByVal idempleado As Integer, ByVal FechaIn As String, ByVal FechaFn As String) As DataTable
         Dim dt As New DataTable
         dt.Columns.Add(New DataColumn("idpartidas_jornada", System.Type.GetType("System.Int32")))
         dt.Columns.Add(New DataColumn("idempleado", System.Type.GetType("System.Int32")))
@@ -1217,10 +1219,11 @@ Public Class ctiCatalogos
         dt.Columns.Add(New DataColumn("fecha", System.Type.GetType("System.DateTime")))
         dt.Columns.Add(New DataColumn("completar", System.Type.GetType("System.Boolean")))
         dt.Columns.Add(New DataColumn("completarfin", System.Type.GetType("System.Boolean")))
+        dt.Columns.Add(New DataColumn("completarhsal", System.Type.GetType("System.Boolean")))
         Dim r As DataRow
         Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()
-        Dim cmd As New SqlCommand("SELECT idpartidas_jornada,jornada,inicio,fin,fecha,completar,completarfin FROM vw_AHorarioE WHERE idempleado=@idempleado ORDER BY fecha desc", dbC)
+        Dim cmd As New SqlCommand("SELECT idpartidas_jornada,jornada,inicio,fin,fecha,completar,completarfin,completarhsal FROM vw_AHorarioE WHERE idempleado=@idempleado AND fecha BETWEEN '" & FechaIn & "' AND '" & FechaFn & "' ORDER BY fecha asc", dbC)
         cmd.Parameters.AddWithValue("idempleado", idempleado)
         Dim rdr As SqlDataReader = cmd.ExecuteReader
         While rdr.Read
@@ -1232,6 +1235,7 @@ Public Class ctiCatalogos
             r(5) = rdr("fecha").ToString
             r(6) = rdr("completar").ToString
             r(7) = rdr("completarfin").ToString
+            r(8) = rdr("completarhsal").ToString
             dt.Rows.Add(r)
         End While
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
@@ -1252,10 +1256,11 @@ Public Class ctiCatalogos
             Dim rdr As SqlDataReader = cmd.ExecuteReader
 
             rdr.Close()
-            cmd.CommandText = "UPDATE Partidas_Jornada SET idempleado = @idempleado, idjornada = @idjornada, fecha = @fecha,completar = @completar,completarfin = @completarfin WHERE idpartidas_jornada = @idpartidas_jornada"
+            cmd.CommandText = "UPDATE Partidas_Jornada SET idempleado = @idempleado, idjornada = @idjornada, fecha = @fecha,completar = @completar,completarfin = @completarfin ,completarhsal = @completarhsal WHERE idpartidas_jornada = @idpartidas_jornada"
             cmd.Parameters.AddWithValue("idempleado", idempleado)
             cmd.Parameters.AddWithValue("completar", "False")
             cmd.Parameters.AddWithValue("completarfin", "False")
+            cmd.Parameters.AddWithValue("completarhsal", "False")
             cmd.Parameters.AddWithValue("idjornada", idjornada)
             cmd.Parameters.AddWithValue("fecha", Convert.ToDateTime(fecha))
             cmd.ExecuteNonQuery()
@@ -1271,7 +1276,7 @@ Public Class ctiCatalogos
                                       ByVal idempleado As Integer,
                                       ByVal idjornada As Integer,
                                       ByVal fecha As String,
-                                      ByVal completar As Boolean, ByVal completarfin As Boolean) As String
+                                      ByVal completar As Boolean, ByVal completarfin As Boolean, ByVal completarhsal As Boolean) As String
         Dim aci As String
         aci = ""
         If Convert.ToInt32(idempleado) > 0 And Convert.ToInt32(idjornada) > 0 Then
@@ -1283,13 +1288,13 @@ Public Class ctiCatalogos
             Dim rdr As SqlDataReader = cmd.ExecuteReader
 
             rdr.Close()
-            cmd.CommandText = "UPDATE Partidas_Jornada SET idempleado = @idempleado, idjornada = @idjornada, fecha = @fecha,completar = @completar,completarfin = @completarfin WHERE idpartidas_jornada = @idpartidas_jornada"
+            cmd.CommandText = "UPDATE Partidas_Jornada SET idempleado = @idempleado, idjornada = @idjornada, fecha = @fecha,completar = @completar,completarfin = @completarfin, completarhsal = @completarhsal WHERE idpartidas_jornada = @idpartidas_jornada"
             cmd.Parameters.AddWithValue("idempleado", idempleado)
-            'cmd.Parameters.AddWithValue("completar", "False")
             cmd.Parameters.AddWithValue("idjornada", idjornada)
             cmd.Parameters.AddWithValue("fecha", Convert.ToDateTime(fecha))
             cmd.Parameters.AddWithValue("completar", completar)
             cmd.Parameters.AddWithValue("completarfin", completarfin)
+            cmd.Parameters.AddWithValue("completarhsal", completarhsal)
             cmd.ExecuteNonQuery()
             aci = "Datos actualizados."
 
