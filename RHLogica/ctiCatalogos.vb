@@ -26,6 +26,31 @@ Public Class ctiCatalogos
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dsP
     End Function
+    Public Function datosSalarios2(ByVal idpuesto As Integer, ByVal idsucursal As Integer) As String()
+        Dim dbC As New SqlConnection(StarTconnStrRH)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT * FROM Salarios WHERE idpuesto = @idpuesto AND idsucursal=@idsucursal", dbC)
+        cmd.Parameters.AddWithValue("idpuesto", idpuesto)
+        cmd.Parameters.AddWithValue("idsucursal", idsucursal)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim dsP As String()
+        If rdr.Read Then
+            ReDim dsP(9)
+            dsP(0) = rdr("idsalario").ToString
+            dsP(1) = rdr("idpuesto").ToString
+            dsP(2) = rdr("hora").ToString
+            dsP(3) = rdr("extra").ToString
+            dsP(4) = rdr("extratiple").ToString
+            dsP(5) = rdr("idsucursal").ToString
+            dsP(6) = rdr("diafestivo").ToString
+            dsP(7) = rdr("diadescanso").ToString
+            dsP(8) = rdr("primadominical").ToString
+        Else
+            ReDim dsP(1) : dsP(1) = "Error: no se encuentra."
+        End If
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return dsP
+    End Function
     Public Function agregarSalario(ByVal idpuesto As Integer, ByVal hora As Integer, ByVal extra As Integer, ByVal extratiple As Integer, ByVal idsucursal As Integer, ByVal diafestivo As Integer, ByVal diadescanso As Integer, ByVal primadominical As Integer) As String()
         Dim ans() As String
         If idpuesto <> 0 Then

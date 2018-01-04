@@ -253,4 +253,8 @@ Public Class ctiCalculo
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dsP
     End Function
+
+    '''''''Salarios
+
+
 End Class
