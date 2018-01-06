@@ -35,7 +35,7 @@ Public Class ctiCatalogos
         Dim rdr As SqlDataReader = cmd.ExecuteReader
         Dim dsP As String()
         If rdr.Read Then
-            ReDim dsP(9)
+            ReDim dsP(10)
             dsP(0) = rdr("idsalario").ToString
             dsP(1) = rdr("idpuesto").ToString
             dsP(2) = rdr("hora").ToString
