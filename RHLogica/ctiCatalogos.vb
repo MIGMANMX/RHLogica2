@@ -51,7 +51,7 @@ Public Class ctiCatalogos
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dsP
     End Function
-    Public Function agregarSalario(ByVal idpuesto As Integer, ByVal hora As Integer, ByVal extra As Integer, ByVal extratiple As Integer, ByVal idsucursal As Integer, ByVal diafestivo As Integer, ByVal diadescanso As Integer, ByVal primadominical As Integer) As String()
+    Public Function agregarSalario(ByVal idpuesto As Integer, ByVal hora As String, ByVal extra As String, ByVal extratiple As String, ByVal idsucursal As Integer, ByVal diafestivo As String, ByVal diadescanso As String, ByVal primadominical As Integer) As String()
         Dim ans() As String
         If idpuesto <> 0 Then
             Dim dbC As New SqlConnection(StarTconnStrRH)
@@ -138,11 +138,11 @@ Public Class ctiCatalogos
         Dim dt As New DataTable
         dt.Columns.Add(New DataColumn("idsalario", System.Type.GetType("System.Int32")))
         dt.Columns.Add(New DataColumn("puesto", System.Type.GetType("System.String")))
-        dt.Columns.Add(New DataColumn("hora", System.Type.GetType("System.Int32")))
-        dt.Columns.Add(New DataColumn("extra", System.Type.GetType("System.Int32")))
-        dt.Columns.Add(New DataColumn("extratiple", System.Type.GetType("System.Int32")))
+        dt.Columns.Add(New DataColumn("hora", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("extra", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("extratiple", System.Type.GetType("System.String")))
         dt.Columns.Add(New DataColumn("sucursal", System.Type.GetType("System.String")))
-        dt.Columns.Add(New DataColumn("diafestivo", System.Type.GetType("System.Int32")))
+        dt.Columns.Add(New DataColumn("diafestivo", System.Type.GetType("System.String")))
         dt.Columns.Add(New DataColumn("diadescanso", System.Type.GetType("System.String")))
         dt.Columns.Add(New DataColumn("primadominical", System.Type.GetType("System.Int32")))
         Dim r As DataRow
@@ -167,7 +167,7 @@ Public Class ctiCatalogos
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dt
     End Function
-    Public Function actualizarSalario(ByVal idsalario As Integer, ByVal idpuesto As Integer, ByVal hora As Integer, ByVal extra As Integer, ByVal extratiple As Integer, ByVal idsucursal As Integer, ByVal diafestivo As Integer, ByVal diadescanso As Integer, ByVal primadominical As Integer) As String
+    Public Function actualizarSalario(ByVal idsalario As Integer, ByVal idpuesto As Integer, ByVal hora As String, ByVal extra As String, ByVal extratiple As String, ByVal idsucursal As Integer, ByVal diafestivo As String, ByVal diadescanso As String, ByVal primadominical As Integer) As String
         Dim err As String
         If idsalario = 0 Then
             err = "Error: no se actualizó, es necesario capturar"
@@ -703,10 +703,12 @@ Public Class ctiCatalogos
                         rdr.Close()
                     Else
                         rdr.Close()
-                        cmd.CommandText = "INSERT INTO Usuarios values @nombre, @usuario, @clave, @nivel, @ids"
-                        cmd.Parameters.AddWithValue("nombre", nombre)
-                        cmd.Parameters.AddWithValue("clave", clave)
-                        cmd.Parameters.AddWithValue("nivel", nivel)
+                        'cmd.CommandText = "INSERT INTO Usuarios values @nombre, @usuario, @clave, @nivel, @ids"
+                        cmd.CommandText = "INSERT INTO Usuarios (nombre,usuario,clave,nivel,idsucursal) values('" & nombre & "','" & usuario & "','" & clave & "','" & nivel & "','" & idSucursal & "')"
+
+                        'cmd.Parameters.AddWithValue("nombre", nombre)
+                        'cmd.Parameters.AddWithValue("clave", clave)
+                        'cmd.Parameters.AddWithValue("nivel", nivel)
                         cmd.ExecuteNonQuery()
                         cmd.CommandText = "SELECT idusuario FROM Usuarios WHERE usuario = @usuario"
                         rdr = cmd.ExecuteReader
@@ -956,7 +958,7 @@ Public Class ctiCatalogos
                     cmd.Parameters.AddWithValue("cp", cp)
                     cmd.Parameters.AddWithValue("telefono", telefono)
                     cmd.Parameters.AddWithValue("correo", correo)
-                    ' cmd.Parameters.AddWithValue("clave_att", clave_att)
+                    cmd.Parameters.AddWithValue("clave_att", clave_att)
 
                     cmd.ExecuteNonQuery()
                     aci = "Datos del empleado actualizados."

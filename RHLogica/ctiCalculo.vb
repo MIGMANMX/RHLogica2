@@ -59,7 +59,7 @@ Public Class ctiCalculo
         dbC.Close() : dbC.Dispose()
         Return dt
     End Function
-    Public Function gvCalculoSucursal() As DataTable
+    Public Function gvCalculoSucursal(ByVal FechaIn As String, ByVal FechaFn As String) As DataTable
         Dim dt As New DataTable
         dt.Columns.Add(New DataColumn("empleado", System.Type.GetType("System.String")))
         dt.Columns.Add(New DataColumn("fecha", System.Type.GetType("System.DateTime")))
@@ -71,9 +71,10 @@ Public Class ctiCalculo
         Dim r As DataRow
         Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()
-        Dim cmd As New SqlCommand("SELECT DISTINCT empleado,fecha,clockin, clockout,hrstrab,detalle,horario FROM Temp_CalculoSucursal where detalle != '' order by empleado asc,fecha", dbC)
-        'cmd.Parameters.AddWithValue("FIn", FIn)
-        'cmd.Parameters.AddWithValue("FFn", FFn)
+        Dim cmd As New SqlCommand("SELECT DISTINCT empleado,fecha,clockin, clockout,hrstrab,detalle,horario FROM Temp_CalculoSucursal WHERE fecha between '" & FechaIn & "' and '" & FechaFn & "' AND detalle != '' order by empleado asc,fecha", dbC)
+        'cmd.Parameters.AddWithValue("FechaIn", FechaIn)
+        'cmd.Parameters.AddWithValue("FechaFn", FechaFn)
+
         Dim rdr As SqlDataReader = cmd.ExecuteReader
         While rdr.Read
             r = dt.NewRow
@@ -253,8 +254,5 @@ Public Class ctiCalculo
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dsP
     End Function
-
-    '''''''Salarios
-
 
 End Class

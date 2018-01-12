@@ -269,7 +269,7 @@ Public Class ctiCalendario
         End If
         Return ans
     End Function
-    Public Function actualizarParticulares(ByVal idparticulares As Integer, ByVal idempleado As Integer, ByVal tipo As String, ByVal fecha As String, ByVal observaciones As String, ByVal cantidad As Integer, ByVal fecha_ued As String) As String
+    Public Function actualizarParticulares(ByVal idparticulares As Integer, ByVal idempleado As Integer, ByVal tipo As String, ByVal fecha As String, ByVal observaciones As String, ByVal cantidad As Integer) As String
         Dim err As String
         If tipo = "" Then
             err = "Error: no se actualizó, es necesario capturar"
@@ -277,13 +277,13 @@ Public Class ctiCalendario
             Dim dbC As New SqlConnection(StarTconnStrRH)
             dbC.Open()
 
-            Dim cmd As New SqlCommand("UPDATE Particulares SET tipo = @tipo, fecha = @fecha, observaciones = @observaciones ,cantidad = @cantidad,fecha_ued = @fecha_ued  WHERE idparticulares = @idparticulares", dbC)
+            Dim cmd As New SqlCommand("UPDATE Particulares SET tipo = @tipo, fecha = @fecha, observaciones = @observaciones ,cantidad = @cantidad  WHERE idparticulares = @idparticulares", dbC)
             cmd.Parameters.AddWithValue("tipo", tipo)
             cmd.Parameters.AddWithValue("fecha", fecha)
             cmd.Parameters.AddWithValue("idempleado", idempleado)
             cmd.Parameters.AddWithValue("observaciones", observaciones)
             cmd.Parameters.AddWithValue("cantidad", cantidad)
-            cmd.Parameters.AddWithValue("fecha_ued", fecha_ued)
+            'cmd.Parameters.AddWithValue("fecha_ued", fecha_ued)
             cmd.Parameters.AddWithValue("idparticulares", idparticulares)
             cmd.ExecuteNonQuery()
             err = "Datos actualizados."
