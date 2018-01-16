@@ -236,7 +236,8 @@ Public Class ctiCalendario
         If tipo <> "" Then
             Dim dbC As New SqlConnection(StarTconnStrRH)
             dbC.Open()
-            Dim cmd As New SqlCommand("SELECT idparticulares FROM Particulares WHERE tipo = @tipo AND fecha = @fecha", dbC)
+            Dim cmd As New SqlCommand("SELECT idparticulares FROM Particulares WHERE idempleado = @idempleado AND tipo = @tipo AND fecha = @fecha", dbC)
+            cmd.Parameters.AddWithValue("idempleado", idempleado)
             cmd.Parameters.AddWithValue("tipo", tipo)
             cmd.Parameters.AddWithValue("fecha", fecha)
             Dim rdr As SqlDataReader = cmd.ExecuteReader
@@ -249,7 +250,7 @@ Public Class ctiCalendario
                 ' cmd.CommandText = "INSERT INTO Particulares SELECT @idempleado,@tipo,@fecha,@observaciones,@cantidad"
                 cmd.CommandText = "INSERT INTO Particulares (idempleado,tipo,fecha,observaciones,cantidad) 
                     values('" & idempleado & "','" & tipo & "','" & fecha & "','" & observaciones & "','" & cantidad & "')"
-                cmd.Parameters.AddWithValue("idempleado", idempleado)
+
                 cmd.Parameters.AddWithValue("observaciones", observaciones)
                 cmd.Parameters.AddWithValue("cantidad", cantidad)
 
@@ -277,14 +278,14 @@ Public Class ctiCalendario
             Dim dbC As New SqlConnection(StarTconnStrRH)
             dbC.Open()
 
-            Dim cmd As New SqlCommand("UPDATE Particulares SET tipo = @tipo, fecha = @fecha, observaciones = @observaciones ,cantidad = @cantidad  WHERE idparticulares = @idparticulares", dbC)
-            cmd.Parameters.AddWithValue("tipo", tipo)
-            cmd.Parameters.AddWithValue("fecha", fecha)
-            cmd.Parameters.AddWithValue("idempleado", idempleado)
-            cmd.Parameters.AddWithValue("observaciones", observaciones)
-            cmd.Parameters.AddWithValue("cantidad", cantidad)
-            'cmd.Parameters.AddWithValue("fecha_ued", fecha_ued)
-            cmd.Parameters.AddWithValue("idparticulares", idparticulares)
+            Dim cmd As New SqlCommand("UPDATE Particulares SET idempleado = '" & idempleado & "', tipo = '" & tipo & "', fecha = '" & fecha & "', observaciones = '" & observaciones & "' , cantidad = '" & cantidad & "', fecha_ued = '" & DateTime.Now() & "'  WHERE idparticulares = '" & idparticulares & "' ", dbC)
+            'cmd.Parameters.AddWithValue("tipo", tipo)
+            'cmd.Parameters.AddWithValue("fecha", fecha)
+            'cmd.Parameters.AddWithValue("idempleado", idempleado)
+            'cmd.Parameters.AddWithValue("observaciones", observaciones)
+            'cmd.Parameters.AddWithValue("cantidad", cantidad)
+            ''cmd.Parameters.AddWithValue("fecha_ued", fecha_ued)
+            'cmd.Parameters.AddWithValue("idparticulares", idparticulares)
             cmd.ExecuteNonQuery()
             err = "Datos actualizados."
 

@@ -254,5 +254,23 @@ Public Class ctiCalculo
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dsP
     End Function
+    '''''Consuta horas trabajadas al dia
+    Public Function ConsultaHrstrab(ByVal idempleado As Integer, ByVal F As String, ByVal FF As String) As String()
+        Dim dbC As New SqlConnection(StarTconnStrRH)
+        dbC.Open()
+        Dim cmd As New SqlCommand("Select hrstrab From Temp_Horas where fecha  BETWEEN '" & F & "' AND '" & FF & "' AND idempleado=@idempleado Order BY fecha ", dbC)
+        cmd.Parameters.AddWithValue("idempleado", idempleado)
 
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim dsP As String()
+        If rdr.Read Then
+            ReDim dsP(1)
+            dsP(0) = rdr("hrstrab").ToString
+
+        Else
+            ReDim dsP(0) : dsP(0) = 0
+        End If
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return dsP
+    End Function
 End Class
