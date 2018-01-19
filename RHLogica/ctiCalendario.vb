@@ -181,6 +181,139 @@ Public Class ctiCalendario
     End Function
 
     '''''Particulares
+    'Public Function gvParticulares(ByVal idempleado As Integer) As DataTable
+    '    Dim dt As New DataTable
+    '    dt.Columns.Add(New DataColumn("idparticulares", System.Type.GetType("System.Int32")))
+    '    dt.Columns.Add(New DataColumn("tipo", System.Type.GetType("System.String")))
+    '    dt.Columns.Add(New DataColumn("fecha", System.Type.GetType("System.String")))
+    '    dt.Columns.Add(New DataColumn("observaciones", System.Type.GetType("System.String")))
+    '    dt.Columns.Add(New DataColumn("cantidad", System.Type.GetType("System.String")))
+    '    dt.Columns.Add(New DataColumn("verificado", System.Type.GetType("System.Boolean")))
+
+    '    Dim r As DataRow
+    '    Dim dbC As New SqlConnection(StarTconnStrRH)
+    '    dbC.Open()
+    '    Dim cmd As New SqlCommand("SELECT idparticulares,tipo,fecha,observaciones,cantidad,verificado FROM Particulares where idempleado=@idempleado ORDER BY fecha desc", dbC)
+    '    cmd.Parameters.AddWithValue("idempleado", idempleado)
+    '    Dim rdr As SqlDataReader = cmd.ExecuteReader
+    '    While rdr.Read
+    '        r = dt.NewRow
+    '        r(0) = rdr("idparticulares").ToString
+    '        r(1) = rdr("tipo").ToString
+    '        r(2) = rdr("fecha").ToString
+    '        r(3) = rdr("observaciones").ToString
+    '        r(4) = rdr("cantidad").ToString
+    '        r(5) = rdr("verificado").ToString
+    '        dt.Rows.Add(r)
+    '    End While
+    '    rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+    '    Return dt
+    'End Function
+    'Public Function datosParticulares(ByVal idparticulares As Integer) As String()
+    '    Dim dbC As New SqlConnection(StarTconnStrRH)
+    '    dbC.Open()
+    '    Dim cmd As New SqlCommand("SELECT * FROM Particulares WHERE idparticulares = @idparticulares", dbC)
+    '    cmd.Parameters.AddWithValue("idparticulares", idparticulares)
+    '    Dim rdr As SqlDataReader = cmd.ExecuteReader
+    '    Dim dsP As String()
+    '    If rdr.Read Then
+    '        ReDim dsP(7)
+    '        dsP(0) = rdr("idparticulares").ToString
+    '        dsP(1) = rdr("idempleado").ToString
+    '        dsP(2) = rdr("tipo").ToString
+    '        dsP(3) = rdr("fecha").ToString
+    '        dsP(4) = rdr("observaciones").ToString
+    '        dsP(5) = rdr("cantidad").ToString
+    '        dsP(6) = rdr("fecha_ued").ToString
+    '        dsP(7) = rdr("verificado").ToString
+    '    Else
+    '        ReDim dsP(1) : dsP(1) = "Error: no se encuentra."
+    '    End If
+    '    rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+    '    Return dsP
+    'End Function
+    'Public Function agregarParticulares(ByVal idempleado As Integer, ByVal tipo As String, ByVal fecha As String, ByVal observaciones As String, ByRef cantidad As Integer, ByVal verificado As Boolean) As String()
+    '    Dim ans() As String
+    '    If tipo <> "" Then
+    '        Dim dbC As New SqlConnection(StarTconnStrRH)
+    '        dbC.Open()
+    '        Dim cmd As New SqlCommand("SELECT idparticulares FROM Particulares WHERE idempleado = @idempleado AND tipo = @tipo AND fecha = @fecha", dbC)
+    '        cmd.Parameters.AddWithValue("idempleado", idempleado)
+    '        cmd.Parameters.AddWithValue("tipo", tipo)
+    '        cmd.Parameters.AddWithValue("fecha", fecha)
+    '        Dim rdr As SqlDataReader = cmd.ExecuteReader
+    '        If rdr.HasRows Then
+    '            ReDim ans(0)
+    '            ans(0) = "Error: no se puede agregar, ya existe el dato."
+    '            rdr.Close()
+    '        Else
+    '            rdr.Close()
+    '            ' cmd.CommandText = "INSERT INTO Particulares SELECT @idempleado,@tipo,@fecha,@observaciones,@cantidad"
+    '            cmd.CommandText = "INSERT INTO Particulares (idempleado,tipo,fecha,observaciones,cantidad,verificado) 
+    '                values('" & idempleado & "','" & tipo & "','" & fecha & "','" & observaciones & "','" & cantidad & "','" & verificado & "')"
+
+    '            cmd.Parameters.AddWithValue("observaciones", observaciones)
+    '            cmd.Parameters.AddWithValue("cantidad", cantidad)
+
+    '            cmd.ExecuteNonQuery()
+    '            cmd.CommandText = "SELECT idparticulares FROM Particulares WHERE tipo = @tipo AND fecha = @fecha AND idempleado = @idempleado"
+    '            rdr = cmd.ExecuteReader
+    '            rdr.Read()
+    '            ReDim ans(1)
+    '            ans(0) = "Agregado."
+    '            ans(1) = rdr("idparticulares").ToString
+    '            rdr.Close()
+    '        End If
+    '        rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+    '    Else
+    '        ReDim ans(0)
+    '        ans(0) = "Error: no se puede agregar, es necesario capturar."
+    '    End If
+    '    Return ans
+    'End Function
+    'Public Function actualizarParticulares(ByVal idparticulares As Integer, ByVal idempleado As Integer, ByVal tipo As String, ByVal fecha As String, ByVal observaciones As String, ByVal cantidad As Integer, ByVal verificado As Boolean) As String
+    '    Dim err As String
+    '    If tipo = "" Then
+    '        err = "Error: no se actualizó, es necesario capturar"
+    '    Else
+    '        Dim dbC As New SqlConnection(StarTconnStrRH)
+    '        dbC.Open()
+
+    '        Dim cmd As New SqlCommand("UPDATE Particulares SET idempleado = '" & idempleado & "', tipo = '" & tipo & "', fecha = '" & fecha & "', observaciones = '" & observaciones & "' , cantidad = '" & cantidad & "', fecha_ued = '" & String.Format("{0:G}", DateTime.Now) & "',verificado = '" & verificado & "'  WHERE idparticulares = '" & idparticulares & "' ", dbC)
+    '        'cmd.Parameters.AddWithValue("tipo", tipo)
+    '        'cmd.Parameters.AddWithValue("fecha", fecha)
+    '        'cmd.Parameters.AddWithValue("idempleado", idempleado)
+    '        'cmd.Parameters.AddWithValue("observaciones", observaciones)
+    '        'cmd.Parameters.AddWithValue("cantidad", cantidad)
+    '        ''cmd.Parameters.AddWithValue("fecha_ued", fecha_ued)
+    '        'cmd.Parameters.AddWithValue("idparticulares", idparticulares)
+    '        cmd.ExecuteNonQuery()
+    '        err = "Datos actualizados."
+
+    '        cmd.Dispose() : dbC.Close() : dbC.Dispose()
+    '    End If
+    '    Return err
+    'End Function
+    'Public Function eliminarParticulares(ByVal idparticulares As Integer) As String
+    '    Dim dbC As New SqlConnection(StarTconnStrRH)
+    '    dbC.Open()
+    '    Dim cmd As New SqlCommand("SELECT idparticulares FROM Particulares WHERE idparticulares = @idparticulares", dbC)
+    '    cmd.Parameters.AddWithValue("idparticulares", idparticulares)
+    '    Dim rdr As SqlDataReader = cmd.ExecuteReader
+    '    Dim err As String
+    '    If rdr.HasRows Then
+    '        err = "Error: no se puede eliminar."
+    '        rdr.Close()
+    '    Else
+    '        rdr.Close()
+    '        cmd.CommandText = "DELETE FROM Particulares WHERE idparticulares = @idparticulares"
+    '        cmd.ExecuteNonQuery()
+    '        err = "Eliminada."
+    '    End If
+    '    rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+    '    Return err
+    'End Function
+    '''''Particulares
     Public Function gvParticulares(ByVal idempleado As Integer) As DataTable
         Dim dt As New DataTable
         dt.Columns.Add(New DataColumn("idparticulares", System.Type.GetType("System.Int32")))
@@ -237,9 +370,9 @@ Public Class ctiCalendario
             Dim dbC As New SqlConnection(StarTconnStrRH)
             dbC.Open()
             Dim cmd As New SqlCommand("SELECT idparticulares FROM Particulares WHERE idempleado = @idempleado AND tipo = @tipo AND fecha = @fecha", dbC)
-            cmd.Parameters.AddWithValue("idempleado", idempleado)
             cmd.Parameters.AddWithValue("tipo", tipo)
             cmd.Parameters.AddWithValue("fecha", fecha)
+            cmd.Parameters.AddWithValue("idempleado", idempleado)
             Dim rdr As SqlDataReader = cmd.ExecuteReader
             If rdr.HasRows Then
                 ReDim ans(0)
@@ -278,14 +411,14 @@ Public Class ctiCalendario
             Dim dbC As New SqlConnection(StarTconnStrRH)
             dbC.Open()
 
-            Dim cmd As New SqlCommand("UPDATE Particulares SET idempleado = '" & idempleado & "', tipo = '" & tipo & "', fecha = '" & fecha & "', observaciones = '" & observaciones & "' , cantidad = '" & cantidad & "', fecha_ued = '" & DateTime.Now() & "'  WHERE idparticulares = '" & idparticulares & "' ", dbC)
-            'cmd.Parameters.AddWithValue("tipo", tipo)
-            'cmd.Parameters.AddWithValue("fecha", fecha)
-            'cmd.Parameters.AddWithValue("idempleado", idempleado)
-            'cmd.Parameters.AddWithValue("observaciones", observaciones)
-            'cmd.Parameters.AddWithValue("cantidad", cantidad)
-            ''cmd.Parameters.AddWithValue("fecha_ued", fecha_ued)
-            'cmd.Parameters.AddWithValue("idparticulares", idparticulares)
+            Dim cmd As New SqlCommand("UPDATE Particulares SET tipo = @tipo, fecha = @fecha, observaciones = @observaciones ,cantidad = @cantidad  WHERE idparticulares = @idparticulares", dbC)
+            cmd.Parameters.AddWithValue("tipo", tipo)
+            cmd.Parameters.AddWithValue("fecha", fecha)
+            cmd.Parameters.AddWithValue("idempleado", idempleado)
+            cmd.Parameters.AddWithValue("observaciones", observaciones)
+            cmd.Parameters.AddWithValue("cantidad", cantidad)
+            'cmd.Parameters.AddWithValue("fecha_ued", fecha_ued)
+            cmd.Parameters.AddWithValue("idparticulares", idparticulares)
             cmd.ExecuteNonQuery()
             err = "Datos actualizados."
 
