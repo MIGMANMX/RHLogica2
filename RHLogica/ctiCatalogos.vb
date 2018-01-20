@@ -625,7 +625,7 @@ Public Class ctiCatalogos
         dt.Columns.Add(New DataColumn("iddetalle_incidencia", System.Type.GetType("System.Int32")))
         dt.Columns.Add(New DataColumn("incidencia", System.Type.GetType("System.String")))
         dt.Columns.Add(New DataColumn("empleado", System.Type.GetType("System.String")))
-        dt.Columns.Add(New DataColumn("fecha", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("fecha", System.Type.GetType("System.DateTime")))
         dt.Columns.Add(New DataColumn("observaciones", System.Type.GetType("System.String")))
         dt.Columns.Add(New DataColumn("verificado", System.Type.GetType("System.Boolean")))
         Dim r As DataRow
