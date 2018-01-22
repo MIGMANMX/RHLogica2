@@ -124,7 +124,7 @@ Public Class ctiCalendario
         Dim r As DataRow
         Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()
-        Dim cmd As New SqlCommand("SELECT * FROM vm_Prestamo_empleado WHERE idempleado=@idempleado ORDER BY fecha Desc", dbC)
+        Dim cmd As New SqlCommand("SELECT * FROM vm_Prestamo_empleado WHERE idempleado=@idempleado ORDER BY fecha desc", dbC)
         cmd.Parameters.AddWithValue("idempleado", idempleado)
         Dim rdr As SqlDataReader = cmd.ExecuteReader
         While rdr.Read

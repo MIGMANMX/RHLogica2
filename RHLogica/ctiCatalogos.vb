@@ -549,7 +549,7 @@ Public Class ctiCatalogos
         If fecha <> "" And observaciones <> "" And idincidencia <> 0 And idempleado <> 0 Then
             Dim dbC As New SqlConnection(StarTconnStrRH)
             dbC.Open()
-            Dim cmd As New SqlCommand("SELECT idincidencia FROM Detalle_incidencias WHERE fecha = @fecha AND idempleado = @idempleado", dbC)
+            Dim cmd As New SqlCommand("SELECT iddetalle_incidencia FROM Detalle_incidencias WHERE fecha = @fecha AND idempleado = @idempleado AND idincidencia = @idincidencia ", dbC)
             cmd.Parameters.AddWithValue("idincidencia", idincidencia)
             cmd.Parameters.AddWithValue("idempleado", idempleado)
             cmd.Parameters.AddWithValue("fecha", Convert.ToDateTime(fecha))
