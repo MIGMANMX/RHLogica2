@@ -642,6 +642,53 @@ Public Class ctiCatalogos
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dt
     End Function
+    '''gvActualizarCheck
+    Public Function gvAsigIncidenciasChk(ByVal idsucursal As Integer) As DataTable
+        Dim dt As New DataTable
+        dt.Columns.Add(New DataColumn("iddetalle_incidencia", System.Type.GetType("System.Int32")))
+        dt.Columns.Add(New DataColumn("incidencia", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("empleado", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("fecha", System.Type.GetType("System.DateTime")))
+        dt.Columns.Add(New DataColumn("observaciones", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("verificado", System.Type.GetType("System.Boolean")))
+        Dim r As DataRow
+        Dim dbC As New SqlConnection(StarTconnStrRH)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT iddetalle_incidencia, incidencia, empleado, fecha, observaciones,verificado  FROM vm_AsignarIncidencia where idsucursal = @idsucursal ORDER BY fecha desc", dbC)
+        cmd.Parameters.AddWithValue("idsucursal", idsucursal)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        While rdr.Read
+            r = dt.NewRow
+            r(0) = rdr("iddetalle_incidencia").ToString : r(1) = rdr("incidencia").ToString : r(2) = rdr("empleado").ToString : r(3) = rdr("fecha").ToString : r(4) = rdr("observaciones").ToString : r(5) = rdr("verificado").ToString
+            dt.Rows.Add(r)
+        End While
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return dt
+    End Function
+    Public Function actualizarAsigIncidenciasCHK(ByVal iddetalle_incidencia As Integer, ByVal verificado As Boolean) As String
+        Dim err As String
+        'If fecha <> "" And observaciones <> "" Then
+        '    err = "Error: no se actualizó, es necesario capturar."
+        'Else
+        Dim dbC As New SqlConnection(StarTconnStrRH)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT iddetalle_incidencia FROM Detalle_incidencias  WHERE iddetalle_incidencia = @iddetalle_incidencia", dbC)
+        cmd.Parameters.AddWithValue("iddetalle_incidencia", iddetalle_incidencia)
+
+        cmd.Parameters.AddWithValue("verificado", verificado)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+
+        rdr.Close()
+        cmd.CommandText = "UPDATE Detalle_incidencias SET  verificado = @verificado WHERE iddetalle_incidencia = @iddetalle_incidencia"
+        cmd.ExecuteNonQuery()
+        err = "Datos de incidencia actualizados."
+
+        rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        'End If
+        Return err
+    End Function
+
+
     ''''''''''Usuarios
     Public Function datosUsuario(ByVal idUsuario As Integer) As String()
         Dim dbC As New SqlConnection(StarTconnStr)
@@ -1352,5 +1399,6 @@ Public Class ctiCatalogos
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dsP
     End Function
+
 End Class
 

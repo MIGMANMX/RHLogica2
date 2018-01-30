@@ -50,8 +50,8 @@ Public Class ctiCalendario
 
         Dim dbC As New SqlConnection(StarTconnStrRH)
             dbC.Open()
-            Dim cmd As New SqlCommand("SELECT idprestamo FROM Prestamo_empleados WHERE idempleado = @idempleado AND fecha = @fecha", dbC)
-            cmd.Parameters.AddWithValue("idempleado", idempleado)
+        Dim cmd As New SqlCommand("SELECT idprestamo FROM Prestamo_empleados WHERE fecha = @fecha AND idempleado = @idempleado", dbC)
+        cmd.Parameters.AddWithValue("idempleado", idempleado)
             cmd.Parameters.AddWithValue("fecha", fecha)
             Dim rdr As SqlDataReader = cmd.ExecuteReader
             If rdr.HasRows Then
@@ -66,6 +66,7 @@ Public Class ctiCalendario
             cmd.Parameters.AddWithValue("idjornada", idjornada)
             cmd.Parameters.AddWithValue("observaciones", observaciones)
             cmd.Parameters.AddWithValue("verificado", verificado)
+
 
             cmd.ExecuteNonQuery()
             cmd.CommandText = "SELECT idprestamo FROM Prestamo_empleados WHERE idempleado = @idempleado AND fecha = @fecha"
@@ -141,6 +142,52 @@ Public Class ctiCalendario
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dt
     End Function
+    '''AutPrestamos
+    Public Function gvPrestamoCHK(ByVal idsucursal As Integer) As DataTable
+        Dim dt As New DataTable
+        dt.Columns.Add(New DataColumn("idprestamo", System.Type.GetType("System.Int32")))
+        dt.Columns.Add(New DataColumn("empleado", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("sucursal", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("jornada", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("fecha", System.Type.GetType("System.DateTime")))
+        dt.Columns.Add(New DataColumn("observaciones", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("verificado", System.Type.GetType("System.Boolean")))
+
+        Dim r As DataRow
+        Dim dbC As New SqlConnection(StarTconnStrRH)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT * FROM vm_Prestamo_empleado WHERE idsucursal = @idsucursal ORDER BY fecha desc", dbC)
+        cmd.Parameters.AddWithValue("idsucursal", idsucursal)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        While rdr.Read
+            r = dt.NewRow
+            r(0) = rdr("idprestamo").ToString
+            r(1) = rdr("empleado").ToString
+            r(2) = rdr("sucursal").ToString
+            r(3) = rdr("jornada").ToString
+            r(4) = rdr("fecha").ToString
+            r(5) = rdr("observaciones").ToString
+            r(6) = rdr("verificado").ToString
+            dt.Rows.Add(r)
+        End While
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return dt
+    End Function
+    Public Function actualizarPrestamoCHK(ByVal idprestamo As Integer, ByVal verificado As Boolean) As String
+        Dim err As String
+        Dim dbC As New SqlConnection(StarTconnStrRH)
+        dbC.Open()
+        Dim cmd As New SqlCommand("UPDATE Prestamo_empleados SET verificado = @verificado WHERE idprestamo = @idprestamo", dbC)
+        cmd.Parameters.AddWithValue("idprestamo", idprestamo)
+        cmd.Parameters.AddWithValue("verificado", verificado)
+        cmd.ExecuteNonQuery()
+        err = "Datos actualizados."
+
+        cmd.Dispose() : dbC.Close() : dbC.Dispose()
+
+        Return err
+    End Function
+
     '''''Jornada
     Public Function datosJornada(ByVal idjornada As Integer) As String()
         Dim dbC As New SqlConnection(StarTconnStrRH)
@@ -542,20 +589,59 @@ Public Class ctiCalendario
     Public Function eliminarParticulares(ByVal idparticulares As Integer) As String
         Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()
-        Dim cmd As New SqlCommand("SELECT idparticulares FROM Particulares WHERE idparticulares = @idparticulares", dbC)
+        Dim cmd As New SqlCommand("DELETE FROM Particulares WHERE idparticulares = @idparticulares", dbC)
         cmd.Parameters.AddWithValue("idparticulares", idparticulares)
-        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        cmd.ExecuteNonQuery()
+
         Dim err As String
-        If rdr.HasRows Then
-            err = "Error: no se puede eliminar."
-            rdr.Close()
-        Else
-            rdr.Close()
-            cmd.CommandText = "DELETE FROM Particulares WHERE idparticulares = @idparticulares"
-            cmd.ExecuteNonQuery()
-            err = "Eliminada."
-        End If
-        rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+
+        err = "Eliminada."
+
+        cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return err
     End Function
+
+    ''CHParticulares
+    Public Function gvParticularesCHK(ByVal idsucursal As Integer) As DataTable
+
+        Dim dt As New DataTable
+        dt.Columns.Add(New DataColumn("idparticulares", System.Type.GetType("System.Int32")))
+        dt.Columns.Add(New DataColumn("empleado", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("tipo", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("fecha", System.Type.GetType("System.DateTime")))
+        dt.Columns.Add(New DataColumn("observaciones", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("cantidad", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("verificado", System.Type.GetType("System.Boolean")))
+        Dim r As DataRow
+        Dim dbC As New SqlConnection(StarTconnStrRH)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idparticulares,empleado,tipo,fecha,observaciones,cantidad,verificado FROM vm_Particulares where idsucursal=@idsucursal ORDER BY fecha desc", dbC)
+        cmd.Parameters.AddWithValue("idsucursal", idsucursal)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        While rdr.Read
+            r = dt.NewRow
+            r(0) = rdr("idparticulares").ToString : r(1) = rdr("empleado").ToString : r(2) = rdr("tipo").ToString : r(3) = rdr("fecha").ToString : r(4) = rdr("observaciones").ToString : r(5) = rdr("cantidad").ToString : r(6) = rdr("verificado").ToString
+            dt.Rows.Add(r)
+        End While
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return dt
+    End Function
+    Public Function actualizarParticularesCHK(ByVal idparticulares As Integer, ByVal verificado As Boolean) As String
+        Dim err As String
+
+        Dim dbC As New SqlConnection(StarTconnStrRH)
+        dbC.Open()
+
+        Dim cmd As New SqlCommand("UPDATE Particulares SET verificado = @verificado  WHERE idparticulares = @idparticulares", dbC)
+
+        cmd.Parameters.AddWithValue("verificado", verificado)
+        cmd.Parameters.AddWithValue("idparticulares", idparticulares)
+        cmd.ExecuteNonQuery()
+        err = "Datos actualizados."
+
+        cmd.Dispose() : dbC.Close() : dbC.Dispose()
+
+        Return err
+    End Function
+
 End Class
