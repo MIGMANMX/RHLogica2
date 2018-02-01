@@ -364,6 +364,18 @@ Public Class ctiWUC
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return lista
     End Function
+    Public Function wucTipoJornada() As SortedList
+        Dim lista As New SortedList
+        Dim dbC As New SqlConnection(StarTconnStrRH)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idtipojornada, nombre FROM TipoJornada ORDER BY nombre", dbC)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        While rdr.Read
+            lista.Add(rdr("nombre").ToString, rdr("idtipojornada").ToString)
+        End While
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return lista
+    End Function
     Public Function wucSuc() As SortedList
         Dim lista As New SortedList
         Dim dbC As New SqlConnection(StarTconnStr)
