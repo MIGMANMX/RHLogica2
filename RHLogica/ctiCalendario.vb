@@ -32,60 +32,61 @@ Public Class ctiCalendario
         Dim rdr As SqlDataReader = cmd.ExecuteReader
         Dim dsP As String()
         If rdr.Read Then
-            ReDim dsP(6)
+            ReDim dsP(7)
             dsP(0) = rdr("idempleado").ToString
             dsP(1) = rdr("idsucursal").ToString
             dsP(2) = rdr("idjornada").ToString
             dsP(3) = rdr("fecha").ToString
             dsP(4) = rdr("observaciones").ToString
             dsP(5) = rdr("verificado").ToString
+            dsP(6) = rdr("nota").ToString
         Else
             ReDim dsP(1) : dsP(1) = "Error: no se encuentra."
         End If
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dsP
     End Function
-    Public Function agregarPrestamo(ByVal idempleado As Integer, ByVal idsucursal As Integer, ByVal idjornada As Integer, ByVal fecha As String, ByVal observaciones As String, ByVal verificado As Boolean) As String()
+    Public Function agregarPrestamo(ByVal idempleado As Integer, ByVal idsucursal As Integer, ByVal idjornada As Integer, ByVal fecha As String, ByVal observaciones As String, ByVal verificado As Boolean, ByVal nota As String) As String()
         Dim ans() As String
 
         Dim dbC As New SqlConnection(StarTconnStrRH)
-            dbC.Open()
+        dbC.Open()
         Dim cmd As New SqlCommand("SELECT idprestamo FROM Prestamo_empleados WHERE fecha = @fecha AND idempleado = @idempleado", dbC)
         cmd.Parameters.AddWithValue("idempleado", idempleado)
-            cmd.Parameters.AddWithValue("fecha", fecha)
-            Dim rdr As SqlDataReader = cmd.ExecuteReader
-            If rdr.HasRows Then
-                ReDim ans(0)
-                ans(0) = "Error: no se puede agregar, ya existe el dato."
-                rdr.Close()
-            Else
-                rdr.Close()
-            cmd.CommandText = "INSERT INTO Prestamo_empleados SELECT @idempleado,@idsucursal,@idjornada,@fecha,@observaciones,@verificado"
+        cmd.Parameters.AddWithValue("fecha", fecha)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        If rdr.HasRows Then
+            ReDim ans(0)
+            ans(0) = "Error: no se puede agregar, ya existe el dato."
+            rdr.Close()
+        Else
+            rdr.Close()
+            cmd.CommandText = "INSERT INTO Prestamo_empleados SELECT @idempleado,@idsucursal,@idjornada,@fecha,@observaciones,@verificado,@nota"
 
             cmd.Parameters.AddWithValue("idsucursal", idsucursal)
             cmd.Parameters.AddWithValue("idjornada", idjornada)
             cmd.Parameters.AddWithValue("observaciones", observaciones)
             cmd.Parameters.AddWithValue("verificado", verificado)
-
+            cmd.Parameters.AddWithValue("nota", nota)
 
             cmd.ExecuteNonQuery()
             cmd.CommandText = "SELECT idprestamo FROM Prestamo_empleados WHERE idempleado = @idempleado AND fecha = @fecha"
             rdr = cmd.ExecuteReader
-                rdr.Read()
-                ReDim ans(1)
-                ans(0) = "Agregado."
+            rdr.Read()
+            ReDim ans(1)
+            ans(0) = "Agregado."
             ans(1) = rdr("idprestamo").ToString
             rdr.Close()
-            End If
-            rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        End If
+        rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
 
-            Return ans
+        Return ans
     End Function
-    Public Function actualizarPrestamo(ByVal idprestamo As Integer, ByVal idempleado As Integer, ByVal idsucursal As Integer, ByVal idjornada As Integer, ByVal fecha As String, ByVal observaciones As String, ByVal verificado As Boolean) As String
+    Public Function actualizarPrestamo(ByVal idprestamo As Integer, ByVal idempleado As Integer, ByVal idsucursal As Integer, ByVal idjornada As Integer, ByVal fecha As String, ByVal observaciones As String, ByVal verificado As Boolean, ByVal nota As String) As String
         Dim err As String
         Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()
-        Dim cmd As New SqlCommand("UPDATE Prestamo_empleados SET idempleado = @idempleado, idsucursal = @idsucursal, idjornada = @idjornada, fecha = @fecha, observaciones = @observaciones, verificado = @verificado WHERE idprestamo = @idprestamo", dbC)
+        Dim cmd As New SqlCommand("UPDATE Prestamo_empleados SET idempleado = @idempleado, idsucursal = @idsucursal, idjornada = @idjornada, fecha = @fecha, observaciones = @observaciones, verificado = @verificado, nota = @nota WHERE idprestamo = @idprestamo", dbC)
         cmd.Parameters.AddWithValue("idprestamo", idprestamo)
         cmd.Parameters.AddWithValue("idempleado", idempleado)
         cmd.Parameters.AddWithValue("idjornada", idjornada)
@@ -93,6 +94,7 @@ Public Class ctiCalendario
         cmd.Parameters.AddWithValue("observaciones", observaciones)
         cmd.Parameters.AddWithValue("idsucursal", idsucursal)
         cmd.Parameters.AddWithValue("verificado", verificado)
+        cmd.Parameters.AddWithValue("nota", nota)
         cmd.ExecuteNonQuery()
         err = "Datos actualizados."
 
@@ -509,7 +511,7 @@ Public Class ctiCalendario
         Dim rdr As SqlDataReader = cmd.ExecuteReader
         Dim dsP As String()
         If rdr.Read Then
-            ReDim dsP(6)
+            ReDim dsP(7)
             dsP(0) = rdr("idparticulares").ToString
             dsP(1) = rdr("idempleado").ToString
             dsP(2) = rdr("tipo").ToString
@@ -517,14 +519,14 @@ Public Class ctiCalendario
             dsP(4) = rdr("observaciones").ToString
             dsP(5) = rdr("cantidad").ToString
             dsP(6) = rdr("verificado").ToString
-
+            dsP(7) = rdr("nota").ToString
         Else
             ReDim dsP(1) : dsP(1) = "Error: no se encuentra."
         End If
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dsP
     End Function
-    Public Function agregarParticulares(ByVal idempleado As Integer, ByVal tipo As String, ByVal fecha As String, ByVal observaciones As String, ByRef cantidad As Integer, ByVal verificado As Boolean) As String()
+    Public Function agregarParticulares(ByVal idempleado As Integer, ByVal tipo As String, ByVal fecha As String, ByVal observaciones As String, ByRef cantidad As Integer, ByVal verificado As Boolean, ByVal nota As String) As String()
         Dim ans() As String
         If tipo <> "" Then
             Dim dbC As New SqlConnection(StarTconnStrRH)
@@ -541,12 +543,12 @@ Public Class ctiCalendario
             Else
                 rdr.Close()
                 ' cmd.CommandText = "INSERT INTO Particulares SELECT @idempleado,@tipo,@fecha,@observaciones,@cantidad"
-                cmd.CommandText = "INSERT INTO Particulares (idempleado,tipo,fecha,observaciones,cantidad,verificado) 
-                    values('" & idempleado & "','" & tipo & "','" & fecha & "','" & observaciones & "','" & cantidad & "','" & verificado & "')"
+                cmd.CommandText = "INSERT INTO Particulares (idempleado,tipo,fecha,observaciones,cantidad,verificado,nota) 
+                    values('" & idempleado & "','" & tipo & "','" & fecha & "','" & observaciones & "','" & cantidad & "','" & verificado & "','" & nota & "')"
 
                 cmd.Parameters.AddWithValue("observaciones", observaciones)
                 cmd.Parameters.AddWithValue("cantidad", cantidad)
-
+                cmd.Parameters.AddWithValue("nota", nota)
                 cmd.ExecuteNonQuery()
                 cmd.CommandText = "SELECT idparticulares FROM Particulares WHERE tipo = @tipo AND fecha = @fecha AND idempleado = @idempleado"
                 rdr = cmd.ExecuteReader
@@ -563,7 +565,7 @@ Public Class ctiCalendario
         End If
         Return ans
     End Function
-    Public Function actualizarParticulares(ByVal idparticulares As Integer, ByVal idempleado As Integer, ByVal tipo As String, ByVal fecha As String, ByVal observaciones As String, ByVal cantidad As Integer, ByVal verificado As Boolean) As String
+    Public Function actualizarParticulares(ByVal idparticulares As Integer, ByVal idempleado As Integer, ByVal tipo As String, ByVal fecha As String, ByVal observaciones As String, ByVal cantidad As Integer, ByVal verificado As Boolean, ByVal nota As String) As String
         Dim err As String
         If tipo = "" Then
             err = "Error: no se actualizó, es necesario capturar"
@@ -571,13 +573,14 @@ Public Class ctiCalendario
             Dim dbC As New SqlConnection(StarTconnStrRH)
             dbC.Open()
 
-            Dim cmd As New SqlCommand("UPDATE Particulares SET tipo = @tipo, fecha = @fecha, observaciones = @observaciones ,cantidad = @cantidad,verificado = @verificado  WHERE idparticulares = @idparticulares", dbC)
+            Dim cmd As New SqlCommand("UPDATE Particulares SET tipo = @tipo, fecha = @fecha, observaciones = @observaciones ,cantidad = @cantidad,verificado = @verificado, nota = @nota  WHERE idparticulares = @idparticulares", dbC)
             cmd.Parameters.AddWithValue("tipo", tipo)
             cmd.Parameters.AddWithValue("fecha", fecha)
             cmd.Parameters.AddWithValue("idempleado", idempleado)
             cmd.Parameters.AddWithValue("observaciones", observaciones)
             cmd.Parameters.AddWithValue("cantidad", cantidad)
             cmd.Parameters.AddWithValue("verificado", verificado)
+            cmd.Parameters.AddWithValue("nota", nota)
             cmd.Parameters.AddWithValue("idparticulares", idparticulares)
             cmd.ExecuteNonQuery()
             err = "Datos actualizados."

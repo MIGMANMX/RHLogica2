@@ -526,25 +526,26 @@ Public Class ctiCatalogos
     Public Function datosAsigIncidencias(ByVal iddetalle_incidencia As Integer) As String()
         Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()
-        Dim cmd As New SqlCommand("SELECT iddetalle_incidencia, idincidencia, idempleado, fecha, observaciones,verificado  FROM Detalle_incidencias WHERE iddetalle_incidencia = @iddetalle_incidencia", dbC)
+        Dim cmd As New SqlCommand("SELECT iddetalle_incidencia, idincidencia, idempleado, fecha, observaciones,verificado,nota  FROM Detalle_incidencias WHERE iddetalle_incidencia = @iddetalle_incidencia", dbC)
         cmd.Parameters.AddWithValue("iddetalle_incidencia", iddetalle_incidencia)
         Dim rdr As SqlDataReader = cmd.ExecuteReader
         Dim dsP As String()
         If rdr.Read Then
-            ReDim dsP(5)
+            ReDim dsP(6)
             dsP(0) = rdr("iddetalle_incidencia").ToString
             dsP(1) = rdr("idincidencia").ToString
             dsP(2) = rdr("idempleado").ToString
             dsP(3) = rdr("fecha").ToString
             dsP(4) = rdr("observaciones").ToString
             dsP(5) = rdr("verificado").ToString
+            dsP(6) = rdr("nota").ToString
         Else
             ReDim dsP(0) : dsP(0) = "Error: no se encuentra ."
         End If
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dsP
     End Function
-    Public Function agregarAsigIncidencias(ByVal idincidencia As Integer, ByVal idempleado As Integer, ByVal fecha As String, ByVal observaciones As String, ByVal verificado As Boolean) As String()
+    Public Function agregarAsigIncidencias(ByVal idincidencia As Integer, ByVal idempleado As Integer, ByVal fecha As String, ByVal observaciones As String, ByVal verificado As Boolean, ByVal nota As String) As String()
         Dim ans() As String
         If fecha <> "" And observaciones <> "" And idincidencia <> 0 And idempleado <> 0 Then
             Dim dbC As New SqlConnection(StarTconnStrRH)
@@ -560,9 +561,10 @@ Public Class ctiCatalogos
                 rdr.Close()
             Else
                 rdr.Close()
-                cmd.CommandText = "INSERT INTO Detalle_incidencias SELECT @idincidencia, @idempleado,@fecha, @observaciones, @verificado"
+                cmd.CommandText = "INSERT INTO Detalle_incidencias SELECT @idincidencia, @idempleado,@fecha, @observaciones, @verificado, @nota"
                 cmd.Parameters.AddWithValue("observaciones", observaciones)
                 cmd.Parameters.AddWithValue("verificado", verificado)
+                cmd.Parameters.AddWithValue("nota", nota)
                 cmd.ExecuteNonQuery()
                 cmd.CommandText = "SELECT iddetalle_incidencia FROM Detalle_incidencias WHERE idempleado = @idempleado and fecha = @fecha"
                 rdr = cmd.ExecuteReader
@@ -579,7 +581,7 @@ Public Class ctiCatalogos
         End If
         Return ans
     End Function
-    Public Function actualizarAsigIncidencias(ByVal iddetalle_incidencia As Integer, ByVal idincidencia As Integer, ByVal idempleado As Integer, ByVal fecha As String, ByVal observaciones As String, ByVal verificado As Boolean) As String
+    Public Function actualizarAsigIncidencias(ByVal iddetalle_incidencia As Integer, ByVal idincidencia As Integer, ByVal idempleado As Integer, ByVal fecha As String, ByVal observaciones As String, ByVal verificado As Boolean, ByVal nota As String) As String
         Dim err As String
         'If fecha <> "" And observaciones <> "" Then
         '    err = "Error: no se actualizó, es necesario capturar."
@@ -593,10 +595,11 @@ Public Class ctiCatalogos
         cmd.Parameters.AddWithValue("observaciones", observaciones)
         cmd.Parameters.AddWithValue("fecha", Convert.ToDateTime(fecha))
         cmd.Parameters.AddWithValue("verificado", verificado)
+        cmd.Parameters.AddWithValue("nota", nota)
         Dim rdr As SqlDataReader = cmd.ExecuteReader
 
         rdr.Close()
-        cmd.CommandText = "UPDATE Detalle_incidencias SET idincidencia = @idincidencia, idempleado = @idempleado, fecha = @fecha, observaciones = @observaciones, verificado = @verificado WHERE iddetalle_incidencia = @iddetalle_incidencia"
+        cmd.CommandText = "UPDATE Detalle_incidencias SET idincidencia = @idincidencia, idempleado = @idempleado, fecha = @fecha, observaciones = @observaciones, verificado = @verificado, nota = @nota WHERE iddetalle_incidencia = @iddetalle_incidencia"
         cmd.ExecuteNonQuery()
         err = "Datos de incidencia actualizados."
 
