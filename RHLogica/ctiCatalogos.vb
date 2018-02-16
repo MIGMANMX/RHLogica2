@@ -869,12 +869,12 @@ Public Class ctiCatalogos
     Public Function datosEmpleado(ByVal idEmpleado As Integer) As String()
         Dim dbC As New SqlConnection(StarTconnStr)
         dbC.Open()
-        Dim cmd As New SqlCommand("SELECT empleado, idsucursal, idpuesto, activo, nss, fecha_ingreso, rfc, fecha_nacimiento, calle, numero, colonia, cp, telefono, correo, fecha_baja, idempleado,clave_att,idtipojornada FROM Empleados WHERE idempleado = @idE", dbC)
+        Dim cmd As New SqlCommand("SELECT empleado, idsucursal, idpuesto, activo, nss, fecha_ingreso, rfc, fecha_nacimiento, calle, numero, colonia, cp, telefono, correo, fecha_baja, idempleado,clave_att,idtipojornada,baja FROM Empleados WHERE idempleado = @idE", dbC)
         cmd.Parameters.AddWithValue("idE", idEmpleado)
         Dim rdr As SqlDataReader = cmd.ExecuteReader
         Dim dsP As String()
         If rdr.Read Then
-            ReDim dsP(18)
+            ReDim dsP(19)
             dsP(0) = rdr("empleado").ToString
             dsP(1) = rdr("idsucursal").ToString
             dsP(2) = rdr("idpuesto").ToString
@@ -895,6 +895,7 @@ Public Class ctiCatalogos
             dsP(16) = rdr("clave_att").ToString
 
             dsP(17) = rdr("idtipojornada").ToString
+            dsP(18) = rdr("baja").ToString
         Else
             ReDim dsP(0) : dsP(0) = "Error: no se encuentra este empleado."
         End If
@@ -931,7 +932,7 @@ Public Class ctiCatalogos
                                     ByVal colonia As String,
                                     ByVal cp As String,
                                     ByVal telefono As String,
-                                    ByVal correo As String, ByVal idpuesto As Integer, ByVal clave_att As String, ByVal idtipojornada As Integer) As String()
+                                    ByVal correo As String, ByVal idpuesto As Integer, ByVal clave_att As String, ByVal idtipojornada As Integer, ByVal baja As Boolean) As String()
         Dim ae() As String
         If empleado <> "" Then
             Dim dbC As New SqlConnection(StarTconnStr)
@@ -951,9 +952,8 @@ Public Class ctiCatalogos
                 Else
                     rdr.Close()
                     'cmd.CommandText = "INSERT INTO Empleados SELECT @empleado, @idsucursal, @activo"
-                    cmd.CommandText = "INSERT INTO Empleados (empleado,idsucursal,activo,nss,fecha_ingreso,rfc,fecha_nacimiento,calle,numero,colonia,cp,telefono,correo,idpuesto, clave_att, idtipojornada) 
-                    values('" & empleado & "','" & idsucursal & "','" & activo & "','" & nss & "','" & fecha_ingreso & "','" & rfc & "','" & fecha_nacimiento & "','" & calle & "','" & numero & "','" & colonia & "','" & cp & "','" & telefono & "','" & correo & "','" & idpuesto & "','" & clave_att & "','" & idtipojornada & "')"
-
+                    cmd.CommandText = "INSERT INTO Empleados (empleado,idsucursal,activo,nss,fecha_ingreso,rfc,fecha_nacimiento,calle,numero,colonia,cp,telefono,correo,idpuesto, clave_att, idtipojornada,baja) 
+                    values('" & empleado & "','" & idsucursal & "','" & activo & "','" & nss & "','" & fecha_ingreso & "','" & rfc & "','" & fecha_nacimiento & "','" & calle & "','" & numero & "','" & colonia & "','" & cp & "','" & telefono & "','" & correo & "','" & idpuesto & "','" & clave_att & "','" & idtipojornada & "','" & baja & "')"
 
                     'cmd.Parameters.AddWithValue("idpuesto", idpuesto)
                     cmd.Parameters.AddWithValue("activo", activo)
@@ -1042,7 +1042,7 @@ Public Class ctiCatalogos
                                         ByVal cp As String,
                                         ByVal telefono As String,
                                         ByVal correo As String,
-                                        ByVal fecha_baja As String, ByVal idtipojornada As Integer) As String
+                                        ByVal fecha_baja As String, ByVal idtipojornada As Integer, ByVal baja As Boolean) As String
         Dim aci As String
         If nombre <> "" Then
             Dim dbC As New SqlConnection(StarTconnStr)
@@ -1061,12 +1061,9 @@ Public Class ctiCatalogos
                     rdr.Close()
                 Else
                     rdr.Close()
-                    cmd.CommandText = "UPDATE Empleados SET empleado = @nombre, idsucursal = @idS, idpuesto = @idpuesto, activo = @activo ,nss = @nss, fecha_ingreso = @fecha_ingreso, rfc = @rfc, fecha_nacimiento =  @fecha_nacimiento, calle = @calle, numero = @numero, colonia = @colonia, cp = @cp, telefono = @telefono, correo = @correo, fecha_baja = @fecha_baja,idtipojornada = @idtipojornada WHERE idempleado = @idE"
+                    cmd.CommandText = "UPDATE Empleados SET empleado = @nombre, idsucursal = @idS, idpuesto = @idpuesto, activo = @activo ,nss = @nss, fecha_ingreso = @fecha_ingreso, rfc = @rfc, fecha_nacimiento =  @fecha_nacimiento, calle = @calle, numero = @numero, colonia = @colonia, cp = @cp, telefono = @telefono, correo = @correo, fecha_baja = @fecha_baja,idtipojornada = @idtipojornada, baja = @baja WHERE idempleado = @idE"
                     cmd.Parameters.AddWithValue("idpuesto", idpuesto)
                     cmd.Parameters.AddWithValue("activo", activo)
-
-                    'Convert.ToDateTime()
-
                     cmd.Parameters.AddWithValue("nss", nss)
                     cmd.Parameters.AddWithValue("fecha_ingreso", Convert.ToDateTime(fecha_ingreso))
                     cmd.Parameters.AddWithValue("rfc", rfc)
@@ -1079,8 +1076,7 @@ Public Class ctiCatalogos
                     cmd.Parameters.AddWithValue("correo", correo)
                     cmd.Parameters.AddWithValue("fecha_baja", Convert.ToDateTime(fecha_baja))
                     cmd.Parameters.AddWithValue("idtipojornada", idtipojornada)
-
-                    'cmd.Parameters.AddWithValue("clave_att", clave_att)
+                    cmd.Parameters.AddWithValue("baja", baja)
                     cmd.ExecuteNonQuery()
                     aci = "Datos del empleado actualizados."
                 End If
@@ -1113,41 +1109,88 @@ Public Class ctiCatalogos
         rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return ee
     End Function
-    Public Function gvEmpleados(ByVal idsucursal As Integer, ByVal activo As Boolean) As DataTable
+    Public Function gvEmpleados(ByVal idsucursal As Integer, ByVal activo As Boolean, ByVal baja As Boolean) As DataTable
         Dim dt As New DataTable
         dt.Columns.Add(New DataColumn("idempleado", System.Type.GetType("System.Int32")))
         dt.Columns.Add(New DataColumn("empleado", System.Type.GetType("System.String")))
         dt.Columns.Add(New DataColumn("puesto", System.Type.GetType("System.String")))
         dt.Columns.Add(New DataColumn("activo", System.Type.GetType("System.Boolean")))
         dt.Columns.Add(New DataColumn("clave_att", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("baja", System.Type.GetType("System.Boolean")))
         Dim r As DataRow
         Dim dbC As New SqlConnection(StarTconnStr)
         dbC.Open()
-        Dim cmd As New SqlCommand("SELECT idempleado, empleado, puesto, activo, clave_att FROM Vista_Empleados WHERE idsucursal = @idsucursal and activo = @activo ORDER BY empleado", dbC)
-        cmd.Parameters.AddWithValue("idsucursal", idsucursal)
-        cmd.Parameters.AddWithValue("activo", activo)
-        Dim rdr As SqlDataReader = cmd.ExecuteReader
-        While rdr.Read
-            r = dt.NewRow
-            r(0) = rdr("idempleado").ToString
-            r(1) = rdr("empleado").ToString
-            r(2) = rdr("puesto").ToString
-            r(3) = rdr("activo").ToString
-            r(4) = rdr("clave_att").ToString
-            'r(4) = rdr("nss").ToString
-            'r(5) = rdr("fecha_ingreso").ToString
-            'r(6) = rdr("rfc").ToString
-            'r(7) = rdr("fecha_nacimiento").ToString
-            'r(8) = rdr("calle").ToString
-            'r(9) = rdr("numero").ToString
-            'r(10) = rdr("colonia").ToString
-            'r(11) = rdr("cp").ToString
-            'r(12) = rdr("telefono").ToString
-            'r(12) = rdr("correo").ToString
-            'r(13) = rdr("fecha_baja").ToString
-            dt.Rows.Add(r)
-        End While
-        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        'If activo = True And baja = False Then
+        Dim cmd As New SqlCommand("SELECT idempleado, empleado, puesto, activo, clave_att,baja FROM Vista_Empleados WHERE idsucursal = @idsucursal and activo = '" & activo & "' and baja = '" & baja & "' ORDER BY empleado", dbC)
+            cmd.Parameters.AddWithValue("idsucursal", idsucursal)
+            cmd.Parameters.AddWithValue("activo", activo)
+            Dim rdr As SqlDataReader = cmd.ExecuteReader
+            While rdr.Read
+                r = dt.NewRow
+                r(0) = rdr("idempleado").ToString
+                r(1) = rdr("empleado").ToString
+                r(2) = rdr("puesto").ToString
+                r(3) = rdr("activo").ToString
+                r(4) = rdr("clave_att").ToString
+                r(5) = rdr("baja").ToString
+                dt.Rows.Add(r)
+            End While
+            rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+
+        'ElseIf activo = False And baja = True Then
+        '    Dim cmd As New SqlCommand("SELECT idempleado, empleado, puesto, activo, clave_att,baja FROM Vista_Empleados WHERE idsucursal = @idsucursal activo = '" & activo & "' and baja = '" & baja & "'  ORDER BY empleado", dbC)
+        '    cmd.Parameters.AddWithValue("idsucursal", idsucursal)
+        '    cmd.Parameters.AddWithValue("baja", baja)
+        '    Dim rdr As SqlDataReader = cmd.ExecuteReader
+        '    While rdr.Read
+        '        r = dt.NewRow
+        '        r(0) = rdr("idempleado").ToString
+        '        r(1) = rdr("empleado").ToString
+        '        r(2) = rdr("puesto").ToString
+        '        r(3) = rdr("activo").ToString
+        '        r(4) = rdr("clave_att").ToString
+        '        r(5) = rdr("baja").ToString
+        '        dt.Rows.Add(r)
+        '    End While
+        '    rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        'End If
+
+        'If activo = True And baja = True Then
+        '    Dim cmd As New SqlCommand("SELECT idempleado, empleado, puesto, activo, clave_att,baja FROM Vista_Empleados WHERE idsucursal = @idsucursal and baja = @baja activo = @activo ORDER BY empleado", dbC)
+        '    cmd.Parameters.AddWithValue("idsucursal", idsucursal)
+        '    cmd.Parameters.AddWithValue("activo", activo)
+        '    cmd.Parameters.AddWithValue("baja", baja)
+        '    Dim rdr As SqlDataReader = cmd.ExecuteReader
+        '    While rdr.Read
+        '        r = dt.NewRow
+        '        r(0) = rdr("idempleado").ToString
+        '        r(1) = rdr("empleado").ToString
+        '        r(2) = rdr("puesto").ToString
+        '        r(3) = rdr("activo").ToString
+        '        r(4) = rdr("clave_att").ToString
+        '        r(5) = rdr("baja").ToString
+        '        dt.Rows.Add(r)
+        '    End While
+        '    rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        'ElseIf activo = False And baja = False Then
+        '    Dim cmd As New SqlCommand("SELECT idempleado, empleado, puesto, activo, clave_att,baja FROM Vista_Empleados WHERE idsucursal = @idsucursal and baja = @baja activo = @activo ORDER BY empleado", dbC)
+        '    cmd.Parameters.AddWithValue("idsucursal", idsucursal)
+        '    cmd.Parameters.AddWithValue("activo", activo)
+        '    cmd.Parameters.AddWithValue("baja", baja)
+        '    Dim rdr As SqlDataReader = cmd.ExecuteReader
+        '    While rdr.Read
+        '        r = dt.NewRow
+        '        r(0) = rdr("idempleado").ToString
+        '        r(1) = rdr("empleado").ToString
+        '        r(2) = rdr("puesto").ToString
+        '        r(3) = rdr("activo").ToString
+        '        r(4) = rdr("clave_att").ToString
+        '        r(5) = rdr("baja").ToString
+        '        dt.Rows.Add(r)
+        '    End While
+        '    rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        'End If
+
         Return dt
     End Function
     'Empleados/Sucursales
