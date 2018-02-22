@@ -115,7 +115,7 @@ Public Class ctiWUC
         dbC.Open()
         Dim cmd As New SqlCommand("", dbC)
         Dim wre As String = ""
-        If activos Then wre = " WHERE activo = 1 "
+        If activos Then wre = " WHERE activo = 1 AND baja = 0"
         If idSucursal > 0 Then
             If wre = "" Then wre = " WHERE idsucursal = @idS " Else wre += " AND idsucursal = @idS "
             cmd.Parameters.AddWithValue("idS", idSucursal)
@@ -140,7 +140,7 @@ Public Class ctiWUC
             cmd.Parameters.AddWithValue("idS", idSucursal)
         End If
 
-        cmd.CommandText = "SELECT idempleado, empleado FROM Empleados " & wre & " AND activo = 1 ORDER BY empleado"
+        cmd.CommandText = "SELECT idempleado, empleado FROM Empleados " & wre & " AND activo = 1 AND baja = 0 ORDER BY empleado"
         Dim rdr As SqlDataReader = cmd.ExecuteReader
         While rdr.Read
             lista.Add(rdr("empleado").ToString, rdr("idempleado").ToString)
