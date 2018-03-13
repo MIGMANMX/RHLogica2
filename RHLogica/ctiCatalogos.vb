@@ -646,7 +646,7 @@ Public Class ctiCatalogos
         Return dt
     End Function
     '''gvActualizarCheck
-    Public Function gvAsigIncidenciasChk(ByVal idsucursal As Integer) As DataTable
+    Public Function gvAsigIncidenciasChk(ByVal idsucursal As Integer, ByVal FechaIn As String, ByVal FechaFn As String) As DataTable
         Dim dt As New DataTable
         dt.Columns.Add(New DataColumn("iddetalle_incidencia", System.Type.GetType("System.Int32")))
         dt.Columns.Add(New DataColumn("incidencia", System.Type.GetType("System.String")))
@@ -657,7 +657,7 @@ Public Class ctiCatalogos
         Dim r As DataRow
         Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()
-        Dim cmd As New SqlCommand("SELECT iddetalle_incidencia, incidencia, empleado, fecha, observaciones,verificado  FROM vm_AsignarIncidencia where idsucursal = @idsucursal ORDER BY fecha desc", dbC)
+        Dim cmd As New SqlCommand("SELECT iddetalle_incidencia, incidencia, empleado, fecha, observaciones,verificado  FROM vm_AsignarIncidencia where idsucursal = @idsucursal AND fecha between '" & FechaIn & "' and '" & FechaFn & "' ORDER BY fecha desc", dbC)
         cmd.Parameters.AddWithValue("idsucursal", idsucursal)
         Dim rdr As SqlDataReader = cmd.ExecuteReader
         While rdr.Read

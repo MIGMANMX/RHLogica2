@@ -145,7 +145,7 @@ Public Class ctiCalendario
         Return dt
     End Function
     '''AutPrestamos
-    Public Function gvPrestamoCHK(ByVal idsucursal As Integer) As DataTable
+    Public Function gvPrestamoCHK(ByVal idsucursal As Integer, ByVal FechaIn As String, ByVal FechaFn As String) As DataTable
         Dim dt As New DataTable
         dt.Columns.Add(New DataColumn("idprestamo", System.Type.GetType("System.Int32")))
         dt.Columns.Add(New DataColumn("empleado", System.Type.GetType("System.String")))
@@ -158,7 +158,7 @@ Public Class ctiCalendario
         Dim r As DataRow
         Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()
-        Dim cmd As New SqlCommand("SELECT * FROM vm_Prestamo_empleado WHERE idsucursal = @idsucursal ORDER BY fecha desc", dbC)
+        Dim cmd As New SqlCommand("SELECT * FROM vm_Prestamo_empleado WHERE idsucursal = @idsucursal AND fecha  between '" & FechaIn & "' and '" & FechaFn & "' ORDER BY fecha desc", dbC)
         cmd.Parameters.AddWithValue("idsucursal", idsucursal)
         Dim rdr As SqlDataReader = cmd.ExecuteReader
         While rdr.Read
@@ -605,7 +605,7 @@ Public Class ctiCalendario
     End Function
 
     ''CHParticulares
-    Public Function gvParticularesCHK(ByVal idsucursal As Integer) As DataTable
+    Public Function gvParticularesCHK(ByVal idsucursal As Integer, ByVal FechaIn As String, ByVal FechaFn As String) As DataTable
 
         Dim dt As New DataTable
         dt.Columns.Add(New DataColumn("idparticulares", System.Type.GetType("System.Int32")))
@@ -618,7 +618,7 @@ Public Class ctiCalendario
         Dim r As DataRow
         Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()
-        Dim cmd As New SqlCommand("SELECT idparticulares,empleado,tipo,fecha,observaciones,cantidad,verificado FROM vm_Particulares where idsucursal=@idsucursal ORDER BY fecha desc", dbC)
+        Dim cmd As New SqlCommand("SELECT idparticulares,empleado,tipo,fecha,observaciones,cantidad,verificado FROM vm_Particulares where idsucursal=@idsucursal  AND fecha between '" & FechaIn & "' and '" & FechaFn & "' ORDER BY fecha desc", dbC)
         cmd.Parameters.AddWithValue("idsucursal", idsucursal)
         Dim rdr As SqlDataReader = cmd.ExecuteReader
         While rdr.Read
