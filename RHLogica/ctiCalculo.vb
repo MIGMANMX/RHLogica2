@@ -68,12 +68,13 @@ Public Class ctiCalculo
         dt.Columns.Add(New DataColumn("clockin", System.Type.GetType("System.String")))
         dt.Columns.Add(New DataColumn("clockout", System.Type.GetType("System.String")))
         dt.Columns.Add(New DataColumn("hrstrab", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("hrstrabnom", System.Type.GetType("System.String")))
         dt.Columns.Add(New DataColumn("detalle", System.Type.GetType("System.String")))
         dt.Columns.Add(New DataColumn("horario", System.Type.GetType("System.String")))
         Dim r As DataRow
         Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()
-        Dim cmd As New SqlCommand("SELECT DISTINCT empleado,fecha,clockin, clockout,hrstrab,detalle,horario FROM Temp_CalculoSucursal WHERE fecha between '" & FechaIn & "' and '" & FechaFn & "' AND detalle != '' order by empleado asc,fecha", dbC)
+        Dim cmd As New SqlCommand("SELECT DISTINCT empleado,fecha,clockin, clockout,hrstrab,hrstrabnom,detalle,horario FROM Temp_CalculoSucursal WHERE fecha between '" & FechaIn & "' and '" & FechaFn & "' AND detalle != '' order by empleado asc,fecha", dbC)
         'cmd.Parameters.AddWithValue("FechaIn", FechaIn)
         'cmd.Parameters.AddWithValue("FechaFn", FechaFn)
 
@@ -85,8 +86,9 @@ Public Class ctiCalculo
             r(2) = rdr("clockin").ToString
             r(3) = rdr("clockout").ToString
             r(4) = rdr("hrstrab").ToString
-            r(5) = rdr("detalle").ToString
-            r(6) = rdr("horario").ToString
+            r(5) = rdr("hrstrabnom").ToString
+            r(6) = rdr("detalle").ToString
+            r(7) = rdr("horario").ToString
             dt.Rows.Add(r)
         End While
         rdr.Close() : rdr = Nothing : cmd.Dispose()

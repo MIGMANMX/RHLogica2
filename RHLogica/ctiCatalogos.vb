@@ -1448,6 +1448,89 @@ Public Class ctiCatalogos
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return dsP
     End Function
+    'Actualizacion masiva de Partida/Jornada
+    Public Function actualizarPartidaJornadaMasiva(ByVal idpartidas_jornada As Integer,
+                                      ByVal completar As Boolean, ByVal completarfin As Boolean, ByVal completarhsal As Boolean) As String
+        Dim aci As String
+        aci = ""
+        'If Convert.ToInt32(idempleado) > 0 And Convert.ToInt32(idjornada) > 0 Then
 
+        Dim dbC As New SqlConnection(StarTconnStrRH)
+            dbC.Open()
+            Dim cmd As New SqlCommand("SELECT idpartidas_jornada FROM Partidas_Jornada WHERE idpartidas_jornada = @idpartidas_jornada", dbC)
+            cmd.Parameters.AddWithValue("idpartidas_jornada", idpartidas_jornada)
+            Dim rdr As SqlDataReader = cmd.ExecuteReader
+
+            rdr.Close()
+            cmd.CommandText = "UPDATE Partidas_Jornada SET completar = @completar,completarfin = @completarfin, completarhsal = @completarhsal WHERE idpartidas_jornada = @idpartidas_jornada"
+
+            cmd.Parameters.AddWithValue("completar", completar)
+            cmd.Parameters.AddWithValue("completarfin", completarfin)
+            cmd.Parameters.AddWithValue("completarhsal", completarhsal)
+            cmd.ExecuteNonQuery()
+            aci = "Datos actualizados."
+
+            rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        'Else
+        '    aci = "Error: no se actualizó, es necesario capturar"
+        'End If
+        Return aci
+    End Function
+    Public Function datosPartidaJornadaMasiva(ByVal idempleado As Integer, ByVal fecha As String) As String()
+        Dim dbC As New SqlConnection(StarTconnStrRH)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idpartidas_jornada,idempleado, empleado, fecha,completar,completarfin,completarhsal FROM Partidas_Jornada  WHERE idempleado=@idempleado and fecha=@fecha", dbC)
+        cmd.Parameters.AddWithValue("idempleado", idempleado)
+        cmd.Parameters.AddWithValue("fecha", fecha)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim dsP As String()
+        If rdr.Read Then
+            ReDim dsP(7)
+            dsP(0) = rdr("idpartidas_jornada").ToString
+            dsP(1) = rdr("idempleado").ToString
+            dsP(2) = rdr("empleado").ToString
+            dsP(3) = rdr("fecha").ToString
+            dsP(4) = rdr("completar").ToString
+            dsP(5) = rdr("completarfin").ToString
+            dsP(6) = rdr("completarhsal").ToString
+        Else
+            ReDim dsP(0) : dsP(0) = "Error: no se encuentra."
+        End If
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return dsP
+    End Function
+    Public Function gvPartidaJornadaMasiva(ByVal idsucursal As Integer, ByVal FechaIn As String, ByVal FechaFn As String) As DataTable
+        Dim dt As New DataTable
+        dt.Columns.Add(New DataColumn("idpartidas_jornada", System.Type.GetType("System.Int32")))
+        dt.Columns.Add(New DataColumn("empleado", System.Type.GetType("System.String")))
+
+        dt.Columns.Add(New DataColumn("inicio", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("fin", System.Type.GetType("System.String")))
+
+        dt.Columns.Add(New DataColumn("fecha", System.Type.GetType("System.DateTime")))
+        dt.Columns.Add(New DataColumn("completar", System.Type.GetType("System.Boolean")))
+        dt.Columns.Add(New DataColumn("completarfin", System.Type.GetType("System.Boolean")))
+        dt.Columns.Add(New DataColumn("completarhsal", System.Type.GetType("System.Boolean")))
+        Dim r As DataRow
+        Dim dbC As New SqlConnection(StarTconnStrRH)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idpartidas_jornada,empleado,inicio,fin,fecha,completar,completarfin,completarhsal FROM vm_AHorarioMasiva WHERE idsucursal=@idsucursal AND fecha BETWEEN '" & FechaIn & "' AND '" & FechaFn & "' ORDER BY fecha asc", dbC)
+        cmd.Parameters.AddWithValue("idsucursal", idsucursal)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        While rdr.Read
+            r = dt.NewRow
+            r(0) = rdr("idpartidas_jornada").ToString
+            r(1) = rdr("empleado").ToString
+            r(2) = rdr("inicio").ToString
+            r(3) = rdr("fin").ToString
+            r(4) = rdr("fecha").ToString
+            r(5) = rdr("completar").ToString
+            r(6) = rdr("completarfin").ToString
+            r(7) = rdr("completarhsal").ToString
+            dt.Rows.Add(r)
+        End While
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return dt
+    End Function
 End Class
 
