@@ -2,35 +2,6 @@
 Public Class ctiCalculo
     'Calculo de Horas
     '''Gridview Chequeo
-    'Public Function gvChequeo(ByVal idempleado As Integer, ByVal Fech1 As String, ByVal Fech2 As String, ByVal idincidencia As Integer) As DataTable
-    '    Dim dt As New DataTable
-    '    dt.Columns.Add(New DataColumn("idchequeo", System.Type.GetType("System.String")))
-    '    dt.Columns.Add(New DataColumn("chec", System.Type.GetType("System.String")))
-    '    dt.Columns.Add(New DataColumn("tipo", System.Type.GetType("System.String")))
-    '    dt.Columns.Add(New DataColumn("incidencia", System.Type.GetType("System.String")))
-    '    dt.Columns.Add(New DataColumn("observaciones", System.Type.GetType("System.String")))
-
-    '    Dim r As DataRow
-    '    Dim dbC As New SqlConnection(StarTconnStrRH)
-    '    dbC.Open()
-    '    Dim cmd As New SqlCommand("delete from Chequeo where  idchequeo in (select a1.idchequeo from Chequeo a1 inner join Chequeo a2 on a1.chec = a2.chec and a1.idchequeo > a2.idchequeo and a1.idempleado = a2.idempleado)", dbC)
-
-    '    ' dbC.Open()
-    '    cmd.ExecuteNonQuery()
-    '    cmd.CommandText = "SELECT DISTINCT idchequeo,chec, tipo,incidencia,observaciones FROM vm_ChequeoIncidencia Where chec between '" & Fech1 & "' and '" & Fech2 & "' AND idempleado=@idempleado  ORDER BY chec"
-    '    cmd.Parameters.AddWithValue("idempleado", idempleado)
-    '    Dim rdr As SqlDataReader = cmd.ExecuteReader
-    '    While rdr.Read
-    '        r = dt.NewRow
-    '        r(0) = rdr("idchequeo").ToString
-    '        r(1) = rdr("chec").ToString : r(2) = rdr("tipo").ToString
-    '        r(3) = rdr("incidencia").ToString : r(4) = rdr("observaciones").ToString
-    '        dt.Rows.Add(r)
-    '    End While
-    '    rdr.Close() : rdr = Nothing : cmd.Dispose()
-    '    dbC.Close() : dbC.Dispose()
-    '    Return dt
-    'End Function
     Public Function gvChequeo() As DataTable
         Dim dt As New DataTable
         dt.Columns.Add(New DataColumn("fecha", System.Type.GetType("System.DateTime")))
@@ -40,10 +11,13 @@ Public Class ctiCalculo
         dt.Columns.Add(New DataColumn("hrstrabnom", System.Type.GetType("System.String")))
         dt.Columns.Add(New DataColumn("detalle", System.Type.GetType("System.String")))
         dt.Columns.Add(New DataColumn("horario", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("althorario", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("hrsextras", System.Type.GetType("System.String")))
+
         Dim r As DataRow
         Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()
-        Dim cmd As New SqlCommand("SELECT  fecha,clockin, clockout,hrstrab,hrstrabnom,detalle,horario FROM Temp_Calculo order by fecha asc", dbC)
+        Dim cmd As New SqlCommand("SELECT  fecha,clockin, clockout,hrstrab, hrstrabnom, detalle,horario,althorario,hrsextras FROM Temp_Calculo order by fecha asc", dbC)
 
         Dim rdr As SqlDataReader = cmd.ExecuteReader
         While rdr.Read
@@ -55,13 +29,15 @@ Public Class ctiCalculo
             r(4) = rdr("hrstrabnom").ToString
             r(5) = rdr("detalle").ToString
             r(6) = rdr("horario").ToString
+            r(7) = rdr("althorario").ToString
+            r(8) = rdr("hrsextras").ToString
             dt.Rows.Add(r)
         End While
         rdr.Close() : rdr = Nothing : cmd.Dispose()
         dbC.Close() : dbC.Dispose()
         Return dt
     End Function
-    Public Function gvCalculoSucursal(ByVal FechaIn As String, ByVal FechaFn As String) As DataTable
+    Public Function gvCalculoSucursal() As DataTable
         Dim dt As New DataTable
         dt.Columns.Add(New DataColumn("empleado", System.Type.GetType("System.String")))
         dt.Columns.Add(New DataColumn("fecha", System.Type.GetType("System.DateTime")))
@@ -71,13 +47,13 @@ Public Class ctiCalculo
         dt.Columns.Add(New DataColumn("hrstrabnom", System.Type.GetType("System.String")))
         dt.Columns.Add(New DataColumn("detalle", System.Type.GetType("System.String")))
         dt.Columns.Add(New DataColumn("horario", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("althorario", System.Type.GetType("System.String")))
         Dim r As DataRow
         Dim dbC As New SqlConnection(StarTconnStrRH)
         dbC.Open()
-        Dim cmd As New SqlCommand("SELECT DISTINCT empleado,fecha,clockin, clockout,hrstrab,hrstrabnom,detalle,horario FROM Temp_CalculoSucursal WHERE fecha between '" & FechaIn & "' and '" & FechaFn & "' AND detalle != '' order by empleado asc,fecha", dbC)
-        'cmd.Parameters.AddWithValue("FechaIn", FechaIn)
-        'cmd.Parameters.AddWithValue("FechaFn", FechaFn)
-
+        Dim cmd As New SqlCommand("SELECT empleado,fecha,clockin, clockout,hrstrab, hrstrabnom, detalle, horario, althorario FROM Temp_CalculoSucursal where detalle != '' order by empleado asc,fecha", dbC)
+        'cmd.Parameters.AddWithValue("FIn", FIn)
+        'cmd.Parameters.AddWithValue("FFn", FFn)
         Dim rdr As SqlDataReader = cmd.ExecuteReader
         While rdr.Read
             r = dt.NewRow
@@ -89,6 +65,7 @@ Public Class ctiCalculo
             r(5) = rdr("hrstrabnom").ToString
             r(6) = rdr("detalle").ToString
             r(7) = rdr("horario").ToString
+            r(8) = rdr("althorario").ToString
             dt.Rows.Add(r)
         End While
         rdr.Close() : rdr = Nothing : cmd.Dispose()

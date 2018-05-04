@@ -869,12 +869,12 @@ Public Class ctiCatalogos
     Public Function datosEmpleado(ByVal idEmpleado As Integer) As String()
         Dim dbC As New SqlConnection(StarTconnStr)
         dbC.Open()
-        Dim cmd As New SqlCommand("SELECT empleado, idsucursal, idpuesto, activo, nss, fecha_ingreso, rfc, fecha_nacimiento, calle, numero, colonia, cp, telefono, correo, fecha_baja, idempleado,clave_att,idtipojornada,baja FROM Empleados WHERE idempleado = @idE", dbC)
+        Dim cmd As New SqlCommand("SELECT empleado, idsucursal, idpuesto, activo, nss, fecha_ingreso, rfc, fecha_nacimiento, calle, numero, colonia, cp, telefono, correo, fecha_baja, idempleado, clave_att, idtipojornada, baja, curp, cnombre, ctelefono, bnota FROM Empleados WHERE idempleado = @idE", dbC)
         cmd.Parameters.AddWithValue("idE", idEmpleado)
         Dim rdr As SqlDataReader = cmd.ExecuteReader
         Dim dsP As String()
         If rdr.Read Then
-            ReDim dsP(19)
+            ReDim dsP(23)
             dsP(0) = rdr("empleado").ToString
             dsP(1) = rdr("idsucursal").ToString
             dsP(2) = rdr("idpuesto").ToString
@@ -896,6 +896,11 @@ Public Class ctiCatalogos
 
             dsP(17) = rdr("idtipojornada").ToString
             dsP(18) = rdr("baja").ToString
+
+            dsP(19) = rdr("curp").ToString
+            dsP(20) = rdr("cnombre").ToString
+            dsP(21) = rdr("ctelefono").ToString
+            dsP(22) = rdr("bnota").ToString
         Else
             ReDim dsP(0) : dsP(0) = "Error: no se encuentra este empleado."
         End If
@@ -932,7 +937,13 @@ Public Class ctiCatalogos
                                     ByVal colonia As String,
                                     ByVal cp As String,
                                     ByVal telefono As String,
-                                    ByVal correo As String, ByVal idpuesto As Integer, ByVal clave_att As String, ByVal idtipojornada As Integer, ByVal baja As Boolean) As String()
+                                    ByVal correo As String, ByVal idpuesto As Integer,
+                                    ByVal clave_att As String, ByVal idtipojornada As Integer,
+                                    ByVal baja As Boolean,
+                                    ByVal curp As String,
+                                    ByVal cnombre As String,
+                                    ByVal ctelefono As String,
+                                    ByVal bnota As String, ByVal fecha_baja As String) As String()
         Dim ae() As String
         If empleado <> "" Then
             Dim dbC As New SqlConnection(StarTconnStr)
@@ -952,8 +963,8 @@ Public Class ctiCatalogos
                 Else
                     rdr.Close()
                     'cmd.CommandText = "INSERT INTO Empleados SELECT @empleado, @idsucursal, @activo"
-                    cmd.CommandText = "INSERT INTO Empleados (empleado,idsucursal,activo,nss,fecha_ingreso,rfc,fecha_nacimiento,calle,numero,colonia,cp,telefono,correo,idpuesto, clave_att, idtipojornada,baja) 
-                    values('" & empleado & "','" & idsucursal & "','" & activo & "','" & nss & "','" & fecha_ingreso & "','" & rfc & "','" & fecha_nacimiento & "','" & calle & "','" & numero & "','" & colonia & "','" & cp & "','" & telefono & "','" & correo & "','" & idpuesto & "','" & clave_att & "','" & idtipojornada & "','" & baja & "')"
+                    cmd.CommandText = "INSERT INTO Empleados (empleado,idsucursal,activo,nss,fecha_ingreso,rfc,fecha_nacimiento,calle,numero,colonia,cp,telefono,correo,idpuesto, clave_att, idtipojornada,baja,curp, cnombre, ctelefono, bnota, fecha_baja) 
+                    values('" & empleado & "','" & idsucursal & "','" & activo & "','" & nss & "','" & fecha_ingreso & "','" & rfc & "','" & fecha_nacimiento & "','" & calle & "','" & numero & "','" & colonia & "','" & cp & "','" & telefono & "','" & correo & "','" & idpuesto & "','" & clave_att & "','" & idtipojornada & "','" & baja & "','" & curp & "','" & cnombre & "','" & ctelefono & "','" & bnota & "','" & fecha_baja & "')"
 
                     'cmd.Parameters.AddWithValue("idpuesto", idpuesto)
                     cmd.Parameters.AddWithValue("activo", activo)
@@ -979,14 +990,16 @@ Public Class ctiCatalogos
         Return ae
     End Function
     Public Function actualizarDirectorio(ByVal idEmpleado As Integer,
-                                       ByVal nombre As String,
-                                       ByVal idSucursal As Integer,
+                                        ByVal nombre As String,
+                                        ByVal idSucursal As Integer,
                                         ByVal calle As String,
                                         ByVal numero As String,
                                         ByVal colonia As String,
                                         ByVal cp As String,
                                         ByVal telefono As String,
-                                        ByVal correo As String, ByVal clave_att As String) As String
+                                        ByVal correo As String, ByVal clave_att As String,
+                                        ByVal cnombre As String,
+                                        ByVal ctelefono As String) As String
         Dim aci As String
         If nombre <> "" Then
             Dim dbC As New SqlConnection(StarTconnStr)
@@ -1005,7 +1018,7 @@ Public Class ctiCatalogos
                     rdr.Close()
                 Else
                     rdr.Close()
-                    cmd.CommandText = "UPDATE Empleados SET calle = @calle, numero = @numero, colonia = @colonia, cp = @cp, telefono = @telefono, correo = @correo, clave_att = @clave_att  WHERE idempleado = @idE"
+                    cmd.CommandText = "UPDATE Empleados SET calle = @calle, numero = @numero, colonia = @colonia, cp = @cp, telefono = @telefono, correo = @correo, clave_att = @clave_att, cnombre = @cnombre, ctelefono = @ctelefono  WHERE idempleado = @idE"
                     cmd.Parameters.AddWithValue("calle", calle)
                     cmd.Parameters.AddWithValue("numero", numero)
                     cmd.Parameters.AddWithValue("colonia", colonia)
@@ -1013,6 +1026,9 @@ Public Class ctiCatalogos
                     cmd.Parameters.AddWithValue("telefono", telefono)
                     cmd.Parameters.AddWithValue("correo", correo)
                     cmd.Parameters.AddWithValue("clave_att", clave_att)
+
+                    cmd.Parameters.AddWithValue("cnombre", cnombre)
+                    cmd.Parameters.AddWithValue("ctelefono", ctelefono)
 
                     cmd.ExecuteNonQuery()
                     aci = "Datos del empleado actualizados."
@@ -1028,11 +1044,11 @@ Public Class ctiCatalogos
         Return aci
     End Function
     Public Function actualizarEmpleado(ByVal idEmpleado As Integer,
-                                       ByVal nombre As String,
-                                       ByVal idSucursal As Integer,
-                                       ByVal idpuesto As String,
-                                       ByVal activo As Boolean,
-                                       ByVal nss As String,
+                                        ByVal nombre As String,
+                                        ByVal idSucursal As Integer,
+                                        ByVal idpuesto As String,
+                                        ByVal activo As Boolean,
+                                        ByVal nss As String,
                                         ByVal fecha_ingreso As String,
                                         ByVal rfc As String,
                                         ByVal fecha_nacimiento As String,
@@ -1042,7 +1058,11 @@ Public Class ctiCatalogos
                                         ByVal cp As String,
                                         ByVal telefono As String,
                                         ByVal correo As String,
-                                        ByVal fecha_baja As String, ByVal idtipojornada As Integer, ByVal baja As Boolean) As String
+                                        ByVal fecha_baja As String, ByVal idtipojornada As Integer, ByVal baja As Boolean,
+                                        ByVal curp As String,
+                                        ByVal cnombre As String,
+                                        ByVal ctelefono As String,
+                                        ByVal bnota As String) As String
         Dim aci As String
         If nombre <> "" Then
             Dim dbC As New SqlConnection(StarTconnStr)
@@ -1061,7 +1081,7 @@ Public Class ctiCatalogos
                     rdr.Close()
                 Else
                     rdr.Close()
-                    cmd.CommandText = "UPDATE Empleados SET empleado = @nombre, idsucursal = @idS, idpuesto = @idpuesto, activo = @activo ,nss = @nss, fecha_ingreso = @fecha_ingreso, rfc = @rfc, fecha_nacimiento =  @fecha_nacimiento, calle = @calle, numero = @numero, colonia = @colonia, cp = @cp, telefono = @telefono, correo = @correo, fecha_baja = @fecha_baja,idtipojornada = @idtipojornada, baja = @baja WHERE idempleado = @idE"
+                    cmd.CommandText = "UPDATE Empleados SET empleado = @nombre, idsucursal = @idS, idpuesto = @idpuesto, activo = @activo ,nss = @nss, fecha_ingreso = @fecha_ingreso, rfc = @rfc, fecha_nacimiento =  @fecha_nacimiento, calle = @calle, numero = @numero, colonia = @colonia, cp = @cp, telefono = @telefono, correo = @correo, fecha_baja = @fecha_baja,idtipojornada = @idtipojornada, baja = @baja, curp = @curp, cnombre = @cnombre, ctelefono = @ctelefono, bnota = @bnota WHERE idempleado = @idE"
                     cmd.Parameters.AddWithValue("idpuesto", idpuesto)
                     cmd.Parameters.AddWithValue("activo", activo)
                     cmd.Parameters.AddWithValue("nss", nss)
@@ -1077,6 +1097,11 @@ Public Class ctiCatalogos
                     cmd.Parameters.AddWithValue("fecha_baja", Convert.ToDateTime(fecha_baja))
                     cmd.Parameters.AddWithValue("idtipojornada", idtipojornada)
                     cmd.Parameters.AddWithValue("baja", baja)
+
+                    cmd.Parameters.AddWithValue("curp", curp)
+                    cmd.Parameters.AddWithValue("cnombre", cnombre)
+                    cmd.Parameters.AddWithValue("ctelefono", ctelefono)
+                    cmd.Parameters.AddWithValue("bnota", bnota)
                     cmd.ExecuteNonQuery()
                     aci = "Datos del empleado actualizados."
                 End If
