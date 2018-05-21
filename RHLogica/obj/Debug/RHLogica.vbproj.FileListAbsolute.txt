@@ -1,0 +1,13 @@
+C:\RHW\Bin\RHLogica.dll
+C:\RHW\Bin\RHLogica.pdb
+C:\RHLogica\RHLogica\obj\Debug\RHLogica.vbprojResolveAssemblyReference.cache
+C:\RHLogica\RHLogica\obj\Debug\RHLogica.Resources.resources
+C:\RHLogica\RHLogica\obj\Debug\RHLogica.vbproj.GenerateResource.Cache
+C:\RHLogica\RHLogica\obj\Debug\RHLogica.dll
+C:\RHLogica\RHLogica\obj\Debug\RHLogica.pdb
+C:\StarRH\RHW\Bin\RHLogica.dll
+C:\StarRH\RHW\Bin\RHLogica.pdb
+C:\StarRH\RHLogica\RHLogica\obj\Debug\RHLogica.Resources.resources
+C:\StarRH\RHLogica\RHLogica\obj\Debug\RHLogica.vbproj.GenerateResource.Cache
+C:\StarRH\RHLogica\RHLogica\obj\Debug\RHLogica.dll
+C:\StarRH\RHLogica\RHLogica\obj\Debug\RHLogica.pdb

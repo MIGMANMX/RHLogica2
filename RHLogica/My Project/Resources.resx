@@ -118,9 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ConDbo" xml:space="preserve">
-    <value>Data Source=localhost;Initial Catalog=dbo;Persist Security Info=True;User ID=sa;Password=Star1234</value>
+    <value>Data Source=SISTEMAS3-PC\STAR;Initial Catalog=dbo;Persist Security Info=True;User ID=sa;Password=star</value>
   </data>
   <data name="ConRh" xml:space="preserve">
-    <value>Data Source=localhost;Initial Catalog=nomRH;Persist Security Info=True;User ID=sa;Password=Star1234</value>
+    <value>Data Source=SISTEMAS3-PC\STAR;Initial Catalog=nomRH;Persist Security Info=True;User ID=sa;Password=star</value>
   </data>
 </root>

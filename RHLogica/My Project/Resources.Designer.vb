@@ -39,7 +39,7 @@ Namespace My.Resources
         Friend ReadOnly Property ResourceManager() As Global.System.Resources.ResourceManager
             Get
                 If Object.ReferenceEquals(resourceMan, Nothing) Then
-                    Dim temp As Global.System.Resources.ResourceManager = New Global.System.Resources.ResourceManager("RHLogica.Resources", GetType(Resources).Assembly)
+                    Dim temp As Global.System.Resources.ResourceManager = New Global.System.Resources.ResourceManager("SistemaLogica.Resources", GetType(Resources).Assembly)
                     resourceMan = temp
                 End If
                 Return resourceMan
@@ -61,7 +61,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Busca una cadena traducida similar a Data Source=localhost;Initial Catalog=dbo;Persist Security Info=True;User ID=sa;Password=Star1234.
+        '''  Busca una cadena traducida similar a Data Source=SISTEMAS3-PC\STAR;Initial Catalog=dbo;Persist Security Info=True;User ID=sa;Password=star.
         '''</summary>
         Friend ReadOnly Property ConDbo() As String
             Get
@@ -70,7 +70,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Busca una cadena traducida similar a Data Source=localhost;Initial Catalog=nomRH;Persist Security Info=True;User ID=sa;Password=Star1234.
+        '''  Busca una cadena traducida similar a Data Source=SISTEMAS3-PC\STAR;Initial Catalog=nomRH;Persist Security Info=True;User ID=sa;Password=star.
         '''</summary>
         Friend ReadOnly Property ConRh() As String
             Get

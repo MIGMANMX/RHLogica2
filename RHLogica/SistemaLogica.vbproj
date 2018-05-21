@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{FD4BBA3D-5C48-4DF4-BF04-9341540F75B6}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>RHLogica</RootNamespace>
-    <AssemblyName>RHLogica</AssemblyName>
+    <RootNamespace>SistemaLogica</RootNamespace>
+    <AssemblyName>SistemaLogica</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>Windows</MyType>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
@@ -17,7 +17,7 @@
     <DebugType>full</DebugType>
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
-    <OutputPath>..\..\RHW\Bin\</OutputPath>
+    <OutputPath>..\..\StarSistema\Bin\</OutputPath>
     <DocumentationFile>
     </DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
@@ -65,10 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ctiAdmin.vb" />
-    <Compile Include="ctiCalculo.vb" />
-    <Compile Include="ctiCalendario.vb" />
     <Compile Include="ctiCatalogos.vb" />
-    <Compile Include="ctiConfiguracion.vb" />
     <Compile Include="ctiStarT.vb" />
     <Compile Include="ctiWUC.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />

@@ -1,0 +1,7 @@
+C:\StarSistema\StarSistema\Bin\SistemaLogica.dll
+C:\StarSistema\StarSistema\Bin\SistemaLogica.pdb
+C:\StarSistema\SistemaLogica\RHLogica\obj\Debug\SistemaLogica.Resources.resources
+C:\StarSistema\SistemaLogica\RHLogica\obj\Debug\SistemaLogica.vbproj.GenerateResource.Cache
+C:\StarSistema\SistemaLogica\RHLogica\obj\Debug\SistemaLogica.dll
+C:\StarSistema\SistemaLogica\RHLogica\obj\Debug\SistemaLogica.pdb
+C:\StarSistema\SistemaLogica\RHLogica\obj\Debug\SistemaLogica.vbprojResolveAssemblyReference.cache
