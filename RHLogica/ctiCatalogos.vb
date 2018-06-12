@@ -1418,5 +1418,952 @@ Public Class ctiCatalogos
 
         Return dt
     End Function
+
+    'ClasesProductos
+    Public Function datosClasesProductos(ByVal idclase As Integer) As String()
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idclase, clase, clave, costo, cuenta_s1, cuenta_s2, cuenta_s3, cuenta_s4, cuenta_s5, cuenta_s6, cuenta_l, cuenta_i  FROM Clases WHERE idclase = @idclase", dbC)
+        cmd.Parameters.AddWithValue("idclase", idclase)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim dsP As String()
+        If rdr.Read Then
+            ReDim dsP(12)
+            dsP(0) = rdr("idclase").ToString
+            dsP(1) = rdr("clase").ToString
+            dsP(2) = rdr("clave").ToString
+            dsP(3) = rdr("costo").ToString
+
+            dsP(4) = rdr("cuenta_s1").ToString
+            dsP(5) = rdr("cuenta_s2").ToString
+            dsP(6) = rdr("cuenta_s3").ToString
+            dsP(7) = rdr("cuenta_s4").ToString
+
+            dsP(8) = rdr("cuenta_s5").ToString
+            dsP(9) = rdr("cuenta_s6").ToString
+            dsP(10) = rdr("cuenta_l").ToString
+            dsP(11) = rdr("cuenta_i").ToString
+
+        Else
+            ReDim dsP(0) : dsP(0) = "Error: no se encuentra."
+        End If
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return dsP
+    End Function
+    Public Function agregarClasesProductos(ByVal clase As String,
+                                           ByVal clave As String,
+                                           ByVal costo As String,
+                                           ByVal cuenta_s1 As String,
+                                           ByVal cuenta_s2 As String,
+                                           ByVal cuenta_s3 As String,
+                                           ByVal cuenta_s4 As String,
+                                           ByVal cuenta_s5 As String,
+                                           ByVal cuenta_s6 As String,
+                                           ByVal cuenta_l As String,
+                                           ByVal cuenta_i As String
+                                    ) As String()
+        Dim ans() As String
+        If clase <> "" Then
+            Dim dbC As New SqlConnection(StarTconnStr)
+            dbC.Open()
+            Dim cmd As New SqlCommand("SELECT clase FROM Clases WHERE clase = @clase", dbC)
+            cmd.Parameters.AddWithValue("clase", clase)
+            Dim rdr As SqlDataReader = cmd.ExecuteReader
+            If rdr.HasRows Then
+                ReDim ans(0)
+                ans(0) = "Error: no se puede agregar, ya existe."
+                rdr.Close()
+            Else
+                rdr.Close()
+                cmd.CommandText = "insert into Clases(clase, clave, costo, cuenta_s1, cuenta_s2, cuenta_s3, cuenta_s4, cuenta_s5, cuenta_s6, cuenta_l, cuenta_i) values('" & clase & "','" & clave & "','" & costo & "','" & cuenta_s1 & "','" & cuenta_s2 & "','" & cuenta_s3 & "','" & cuenta_s4 & "','" & cuenta_s5 & "','" & cuenta_s6 & "','" & cuenta_l & "','" & cuenta_i & "')"
+
+                cmd.ExecuteNonQuery()
+                cmd.CommandText = "SELECT idclase FROM Clases WHERE clase = @clase"
+                rdr = cmd.ExecuteReader
+                rdr.Read()
+                ReDim ans(1)
+                ans(0) = "Agregado."
+                ans(1) = rdr("idclase").ToString
+                rdr.Close()
+            End If
+            rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Else
+            ReDim ans(0)
+            ans(0) = "Error: no se puede agregar, es necesario capturar."
+        End If
+        Return ans
+    End Function
+    Public Function actualizarClasesProductos(ByVal idclase As Integer,
+                                           ByVal clase As String,
+                                           ByVal clave As String,
+                                           ByVal costo As String,
+                                           ByVal cuenta_s1 As String,
+                                           ByVal cuenta_s2 As String,
+                                           ByVal cuenta_s3 As String,
+                                           ByVal cuenta_s4 As String,
+                                           ByVal cuenta_s5 As String,
+                                           ByVal cuenta_s6 As String,
+                                           ByVal cuenta_l As String,
+                                           ByVal cuenta_i As String) As String
+
+        Dim err As String
+        If clase = "" Then
+            err = "Error: no se actualizó, es necesario capturar."
+        Else
+            Dim dbC As New SqlConnection(StarTconnStr)
+            dbC.Open()
+            Dim cmd As New SqlCommand("SELECT idclase FROM Clases WHERE clase = @clase AND idclase <> @idclase", dbC)
+            cmd.Parameters.AddWithValue("clase", clase)
+            cmd.Parameters.AddWithValue("idclase", idclase)
+            Dim rdr As SqlDataReader = cmd.ExecuteReader
+            If rdr.HasRows Then
+                rdr.Close()
+                err = "Error: no se actualizó, ya existe."
+            Else
+                rdr.Close()
+                cmd.CommandText = "UPDATE Clases SET clase = @clase, clave = @clave, costo = @costo, cuenta_s1 = @cuenta_s1, cuenta_s2 = @cuenta_s2, cuenta_s3 = @cuenta_s3, cuenta_s4 = @cuenta_s4 , cuenta_s5 = @cuenta_s5, cuenta_s6 = @cuenta_s6, cuenta_l = @cuenta_l, cuenta_i = @cuenta_i WHERE idclase = @idclase"
+
+                cmd.Parameters.AddWithValue("clave", clave)
+                cmd.Parameters.AddWithValue("costo", costo)
+                cmd.Parameters.AddWithValue("cuenta_s1", cuenta_s1)
+                cmd.Parameters.AddWithValue("cuenta_s2", cuenta_s2)
+                cmd.Parameters.AddWithValue("cuenta_s3", cuenta_s3)
+                cmd.Parameters.AddWithValue("cuenta_s4", cuenta_s4)
+                cmd.Parameters.AddWithValue("cuenta_s5", cuenta_s5)
+                cmd.Parameters.AddWithValue("cuenta_s6", cuenta_s6)
+                cmd.Parameters.AddWithValue("cuenta_l", cuenta_l)
+                cmd.Parameters.AddWithValue("cuenta_i", cuenta_i)
+
+                cmd.ExecuteNonQuery()
+                err = "Datos actualizados."
+            End If
+            rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        End If
+        Return err
+    End Function
+    Public Function eliminarClasesProductos(ByVal idclase As Integer) As String
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idclase FROM Clases WHERE idclase = @idclase", dbC)
+        cmd.Parameters.AddWithValue("idclase", idclase)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim ee As String
+        If rdr.HasRows Then
+
+            rdr.Close()
+            cmd.CommandText = "DELETE FROM Clases WHERE idclase = @idclase"
+            cmd.ExecuteNonQuery()
+            ee = "Eliminado."
+        End If
+        rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return ee
+    End Function
+    Public Function gvClasesProductos() As DataTable
+        Dim dt As New DataTable
+        dt.Columns.Add(New DataColumn("idclase", System.Type.GetType("System.Int32")))
+        dt.Columns.Add(New DataColumn("clase", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("clave", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("costo", System.Type.GetType("System.String")))
+
+        dt.Columns.Add(New DataColumn("cuenta_s1", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("cuenta_s2", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("cuenta_s3", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("cuenta_s4", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("cuenta_s5", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("cuenta_s6", System.Type.GetType("System.String")))
+
+        dt.Columns.Add(New DataColumn("cuenta_l", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("cuenta_i", System.Type.GetType("System.String")))
+
+        Dim r As DataRow
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+
+        Dim cmd As New SqlCommand("SELECT idclase, clase, clave, costo, cuenta_s1, cuenta_s2, cuenta_s3, cuenta_s4, cuenta_s5, cuenta_s6, cuenta_l, cuenta_i  FROM Clases  ORDER BY clase", dbC)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        While rdr.Read
+            r = dt.NewRow
+
+            r(0) = rdr("idclase").ToString
+            r(1) = rdr("clase").ToString
+            r(2) = rdr("clave").ToString
+            r(3) = rdr("costo").ToString
+
+            r(4) = rdr("cuenta_s1").ToString
+            r(5) = rdr("cuenta_s2").ToString
+            r(6) = rdr("cuenta_s3").ToString
+            r(7) = rdr("cuenta_s4").ToString
+
+            r(8) = rdr("cuenta_s5").ToString
+            r(9) = rdr("cuenta_s6").ToString
+            r(10) = rdr("cuenta_l").ToString
+            r(11) = rdr("cuenta_i").ToString
+
+            dt.Rows.Add(r)
+        End While
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+
+        Return dt
+    End Function
+
+    'ClasesGastos
+    Public Function datosClasesGastos(ByVal idclase As Integer) As String()
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idclase, clase, clave, grupo  FROM ClasesG WHERE idclase = @idclase", dbC)
+        cmd.Parameters.AddWithValue("idclase", idclase)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim dsP As String()
+        If rdr.Read Then
+            ReDim dsP(4)
+            dsP(0) = rdr("idclase").ToString
+            dsP(1) = rdr("clase").ToString
+            dsP(2) = rdr("clave").ToString
+            dsP(3) = rdr("grupo").ToString
+
+
+
+        Else
+            ReDim dsP(0) : dsP(0) = "Error: no se encuentra."
+        End If
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return dsP
+    End Function
+    Public Function agregarClasesGastos(ByVal clase As String,
+                                    ByVal clave As String,
+                                    ByVal grupo As String
+                                    ) As String()
+        Dim ans() As String
+        If clase <> "" Then
+            Dim dbC As New SqlConnection(StarTconnStr)
+            dbC.Open()
+            Dim cmd As New SqlCommand("SELECT clase FROM ClasesG WHERE clase = @clase", dbC)
+            cmd.Parameters.AddWithValue("clase", clase)
+            Dim rdr As SqlDataReader = cmd.ExecuteReader
+            If rdr.HasRows Then
+                ReDim ans(0)
+                ans(0) = "Error: no se puede agregar, ya existe."
+                rdr.Close()
+            Else
+                rdr.Close()
+                cmd.CommandText = "insert into ClasesG (clase,clave,grupo) values('" & clase & "','" & clave & "'," & grupo & ")"
+
+                cmd.ExecuteNonQuery()
+                cmd.CommandText = "SELECT idclase FROM ClasesG WHERE clase = @clase"
+                rdr = cmd.ExecuteReader
+                rdr.Read()
+                ReDim ans(1)
+                ans(0) = "Agregado."
+                ans(1) = rdr("idclase").ToString
+                rdr.Close()
+            End If
+            rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Else
+            ReDim ans(0)
+            ans(0) = "Error: no se puede agregar, es necesario capturar."
+        End If
+        Return ans
+    End Function
+    Public Function actualizarClasesGastos(ByVal idclase As Integer,
+                                       ByVal clase As String,
+                                    ByVal clave As String,
+                                    ByVal grupo As String) As String
+
+        Dim err As String
+        If clase = "" Then
+            err = "Error: no se actualizó, es necesario capturar."
+        Else
+            Dim dbC As New SqlConnection(StarTconnStr)
+            dbC.Open()
+            Dim cmd As New SqlCommand("SELECT idclase FROM ClasesG WHERE clase = @clase AND idclase <> @idclase", dbC)
+            cmd.Parameters.AddWithValue("clase", clase)
+            cmd.Parameters.AddWithValue("idclase", idclase)
+            Dim rdr As SqlDataReader = cmd.ExecuteReader
+            If rdr.HasRows Then
+                rdr.Close()
+                err = "Error: no se actualizó, ya existe."
+            Else
+                rdr.Close()
+                cmd.CommandText = "UPDATE ClasesG SET clase = @clase, clave = @clave, grupo = @grupo WHERE idclase = @idclase"
+
+                cmd.Parameters.AddWithValue("clave", clave)
+                cmd.Parameters.AddWithValue("grupo", grupo)
+
+
+                cmd.ExecuteNonQuery()
+                err = "Datos actualizados."
+            End If
+            rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        End If
+        Return err
+    End Function
+    Public Function eliminarClasesGastos(ByVal idclase As Integer) As String
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idclase FROM ClasesG WHERE idclase = @idclase", dbC)
+        cmd.Parameters.AddWithValue("idclase", idclase)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim ee As String
+        If rdr.HasRows Then
+
+            rdr.Close()
+            cmd.CommandText = "DELETE FROM ClasesG WHERE idclase = @idclase"
+            cmd.ExecuteNonQuery()
+            ee = "Eliminado."
+        End If
+        rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return ee
+    End Function
+    Public Function gvClasesGastos() As DataTable
+        Dim dt As New DataTable
+        dt.Columns.Add(New DataColumn("idclase", System.Type.GetType("System.Int32")))
+        dt.Columns.Add(New DataColumn("clase", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("clave", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("grupo", System.Type.GetType("System.String")))
+
+        Dim r As DataRow
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+        'If activo = True And baja = False Then
+        Dim cmd As New SqlCommand("SELECT idclase, clase, clave, grupo FROM ClasesG  ORDER BY clase", dbC)
+
+
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        While rdr.Read
+            r = dt.NewRow
+            r(0) = rdr("idclase").ToString
+            r(1) = rdr("clase").ToString
+            r(2) = rdr("clave").ToString
+            r(3) = rdr("grupo").ToString
+
+            dt.Rows.Add(r)
+        End While
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+
+        Return dt
+    End Function
+
+    'ConceptosGastos
+
+
+    'ClasesCajaChica
+    Public Function datosClasesCajaChica(ByVal idclase As Integer) As String()
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idclase, clase, clave FROM ClasesCH WHERE idclase = @idclase", dbC)
+        cmd.Parameters.AddWithValue("idclase", idclase)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim dsP As String()
+        If rdr.Read Then
+            ReDim dsP(3)
+            dsP(0) = rdr("idclase").ToString
+            dsP(1) = rdr("clase").ToString
+            dsP(2) = rdr("clave").ToString
+
+        Else
+            ReDim dsP(0) : dsP(0) = "Error: no se encuentra."
+        End If
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return dsP
+    End Function
+    Public Function agregarClasesCajaChica(ByVal clase As String,
+                                           ByVal clave As String) As String()
+        Dim ans() As String
+        If clase <> "" Then
+            Dim dbC As New SqlConnection(StarTconnStr)
+            dbC.Open()
+            Dim cmd As New SqlCommand("SELECT clase FROM ClasesCH WHERE clase = @clase", dbC)
+            cmd.Parameters.AddWithValue("clase", clase)
+            Dim rdr As SqlDataReader = cmd.ExecuteReader
+            If rdr.HasRows Then
+                ReDim ans(0)
+                ans(0) = "Error: no se puede agregar, ya existe."
+                rdr.Close()
+            Else
+                rdr.Close()
+                cmd.CommandText = "insert into ClasesCH(clase, clave) values('" & clase & "','" & clave & "')"
+
+                cmd.ExecuteNonQuery()
+                cmd.CommandText = "SELECT idclase FROM ClasesCH WHERE clase = @clase"
+                rdr = cmd.ExecuteReader
+                rdr.Read()
+                ReDim ans(1)
+                ans(0) = "Agregado."
+                ans(1) = rdr("idclase").ToString
+                rdr.Close()
+            End If
+            rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Else
+            ReDim ans(0)
+            ans(0) = "Error: no se puede agregar, es necesario capturar."
+        End If
+        Return ans
+    End Function
+    Public Function actualizarClasesCajaChica(ByVal idclase As Integer,
+                                           ByVal clase As String,
+                                           ByVal clave As String) As String
+
+        Dim err As String
+        If clase = "" Then
+            err = "Error: no se actualizó, es necesario capturar."
+        Else
+            Dim dbC As New SqlConnection(StarTconnStr)
+            dbC.Open()
+            Dim cmd As New SqlCommand("SELECT idclase FROM ClasesCH WHERE clase = @clase AND idclase <> @idclase", dbC)
+            cmd.Parameters.AddWithValue("clase", clase)
+            cmd.Parameters.AddWithValue("idclase", idclase)
+            Dim rdr As SqlDataReader = cmd.ExecuteReader
+            If rdr.HasRows Then
+                rdr.Close()
+                err = "Error: no se actualizó, ya existe."
+            Else
+                rdr.Close()
+                cmd.CommandText = "UPDATE ClasesCH SET clase = @clase, clave = @clave WHERE idclase = @idclase"
+
+                cmd.Parameters.AddWithValue("clave", clave)
+
+                cmd.ExecuteNonQuery()
+                err = "Datos actualizados."
+            End If
+            rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        End If
+        Return err
+    End Function
+    Public Function eliminarClasesCajaChica(ByVal idclase As Integer) As String
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idclase FROM ClasesCH WHERE idclase = @idclase", dbC)
+        cmd.Parameters.AddWithValue("idclase", idclase)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim ee As String
+        If rdr.HasRows Then
+
+            rdr.Close()
+            cmd.CommandText = "DELETE FROM ClasesCH WHERE idclase = @idclase"
+            cmd.ExecuteNonQuery()
+            ee = "Eliminado."
+        End If
+        rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return ee
+    End Function
+    Public Function gvClasesCajaChica() As DataTable
+        Dim dt As New DataTable
+        dt.Columns.Add(New DataColumn("idclase", System.Type.GetType("System.Int32")))
+        dt.Columns.Add(New DataColumn("clase", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("clave", System.Type.GetType("System.String")))
+
+        Dim r As DataRow
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+
+        Dim cmd As New SqlCommand("SELECT idclase, clase, clave FROM ClasesCH  ORDER BY clase", dbC)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        While rdr.Read
+            r = dt.NewRow
+
+            r(0) = rdr("idclase").ToString
+            r(1) = rdr("clase").ToString
+            r(2) = rdr("clave").ToString
+
+
+            dt.Rows.Add(r)
+        End While
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+
+        Return dt
+    End Function
+
+    'ConceptosdeVales
+    Public Function datosConceptosdeVales(ByVal idvale As Integer) As String()
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idvale, concepto FROM ConceptosVales WHERE idvale = @idvale", dbC)
+        cmd.Parameters.AddWithValue("idvale", idvale)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim dsP As String()
+        If rdr.Read Then
+            ReDim dsP(2)
+            dsP(0) = rdr("idvale").ToString
+            dsP(1) = rdr("concepto").ToString
+
+
+        Else
+            ReDim dsP(0) : dsP(0) = "Error: no se encuentra."
+        End If
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return dsP
+    End Function
+    Public Function agregarConceptosdeVales(ByVal concepto As String) As String()
+        Dim ans() As String
+        If concepto <> "" Then
+            Dim dbC As New SqlConnection(StarTconnStr)
+            dbC.Open()
+            Dim cmd As New SqlCommand("SELECT concepto FROM ConceptosVales WHERE concepto = @concepto", dbC)
+            cmd.Parameters.AddWithValue("concepto", concepto)
+            Dim rdr As SqlDataReader = cmd.ExecuteReader
+            If rdr.HasRows Then
+                ReDim ans(0)
+                ans(0) = "Error: no se puede agregar, ya existe."
+                rdr.Close()
+            Else
+                rdr.Close()
+                cmd.CommandText = "insert into ConceptosVales(concepto) values('" & concepto & "')"
+
+                cmd.ExecuteNonQuery()
+                cmd.CommandText = "SELECT idvale FROM ConceptosVales WHERE concepto = @concepto"
+                rdr = cmd.ExecuteReader
+                rdr.Read()
+                ReDim ans(1)
+                ans(0) = "Agregado."
+                ans(1) = rdr("idvale").ToString
+                rdr.Close()
+            End If
+            rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Else
+            ReDim ans(0)
+            ans(0) = "Error: no se puede agregar, es necesario capturar."
+        End If
+        Return ans
+    End Function
+    Public Function actualizarConceptosdeVales(ByVal idvale As Integer,
+                                           ByVal concepto As String) As String
+
+        Dim err As String
+        If concepto = "" Then
+            err = "Error: no se actualizó, es necesario capturar."
+        Else
+            Dim dbC As New SqlConnection(StarTconnStr)
+            dbC.Open()
+            Dim cmd As New SqlCommand("SELECT idvale FROM ConceptosVales WHERE concepto = @concepto AND idvale <> @idvale", dbC)
+            cmd.Parameters.AddWithValue("concepto", concepto)
+            cmd.Parameters.AddWithValue("idvale", idvale)
+            Dim rdr As SqlDataReader = cmd.ExecuteReader
+            If rdr.HasRows Then
+                rdr.Close()
+                err = "Error: no se actualizó, ya existe."
+            Else
+                rdr.Close()
+                cmd.CommandText = "UPDATE ConceptosVales SET concepto = @concepto WHERE idvale = @idvale"
+
+
+                cmd.ExecuteNonQuery()
+                err = "Datos actualizados."
+            End If
+            rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        End If
+        Return err
+    End Function
+    Public Function eliminarConceptosdeVales(ByVal idvale As Integer) As String
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idvale FROM ConceptosVales WHERE idvale = @idvale", dbC)
+        cmd.Parameters.AddWithValue("idvale", idvale)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim ee As String
+        If rdr.HasRows Then
+
+            rdr.Close()
+            cmd.CommandText = "DELETE FROM ConceptosVales WHERE idvale = @idvale"
+            cmd.ExecuteNonQuery()
+            ee = "Eliminado."
+        End If
+        rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return ee
+    End Function
+    Public Function gvConceptosdeVales() As DataTable
+        Dim dt As New DataTable
+        dt.Columns.Add(New DataColumn("idvale", System.Type.GetType("System.Int32")))
+        dt.Columns.Add(New DataColumn("concepto", System.Type.GetType("System.String")))
+
+
+        Dim r As DataRow
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+
+        Dim cmd As New SqlCommand("SELECT idvale, concepto FROM ConceptosVales  ORDER BY concepto", dbC)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        While rdr.Read
+            r = dt.NewRow
+
+            r(0) = rdr("idvale").ToString
+            r(1) = rdr("concepto").ToString
+
+
+            dt.Rows.Add(r)
+        End While
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+
+        Return dt
+    End Function
+
+    'ConfiSucursales
+    Public Function datosConfiSucursales(ByVal idsucursal As Integer) As String()
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idsucursal, sucursal FROM Sucursales WHERE idsucursal = @idsucursal", dbC)
+        cmd.Parameters.AddWithValue("idsucursal", idsucursal)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim dsP As String()
+        If rdr.Read Then
+            ReDim dsP(2)
+            dsP(0) = rdr("idsucursal").ToString
+            dsP(1) = rdr("sucursal").ToString
+
+
+        Else
+            ReDim dsP(0) : dsP(0) = "Error: no se encuentra."
+        End If
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return dsP
+    End Function
+    Public Function agregarConfiSucursales(ByVal sucursal As String) As String()
+        Dim ans() As String
+        If sucursal <> "" Then
+            Dim dbC As New SqlConnection(StarTconnStr)
+            dbC.Open()
+            Dim cmd As New SqlCommand("SELECT sucursal FROM Sucursales WHERE sucursal = @sucursal", dbC)
+            cmd.Parameters.AddWithValue("sucursal", sucursal)
+            Dim rdr As SqlDataReader = cmd.ExecuteReader
+            If rdr.HasRows Then
+                ReDim ans(0)
+                ans(0) = "Error: no se puede agregar, ya existe."
+                rdr.Close()
+            Else
+                rdr.Close()
+                cmd.CommandText = "insert into Sucursales (sucursal) values('" & sucursal & "')"
+
+                cmd.ExecuteNonQuery()
+                cmd.CommandText = "SELECT idsucursal FROM Sucursales WHERE sucursal = @sucursal"
+                rdr = cmd.ExecuteReader
+                rdr.Read()
+                ReDim ans(1)
+                ans(0) = "Agregado."
+                ans(1) = rdr("idsucursal").ToString
+                rdr.Close()
+            End If
+            rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Else
+            ReDim ans(0)
+            ans(0) = "Error: no se puede agregar, es necesario capturar."
+        End If
+        Return ans
+    End Function
+    Public Function actualizarConfiSucursales(ByVal idsucursal As Integer,
+                                           ByVal sucursal As String) As String
+
+        Dim err As String
+        If sucursal = "" Then
+            err = "Error: no se actualizó, es necesario capturar."
+        Else
+            Dim dbC As New SqlConnection(StarTconnStr)
+            dbC.Open()
+            Dim cmd As New SqlCommand("SELECT idsucursal FROM Sucursales WHERE sucursal = @sucursal AND idsucursal <> @idsucursal", dbC)
+            cmd.Parameters.AddWithValue("sucursal", sucursal)
+            cmd.Parameters.AddWithValue("idsucursal", idsucursal)
+            Dim rdr As SqlDataReader = cmd.ExecuteReader
+            If rdr.HasRows Then
+                rdr.Close()
+                err = "Error: no se actualizó, ya existe."
+            Else
+                rdr.Close()
+                cmd.CommandText = "UPDATE Sucursales SET sucursal = @sucursal WHERE idsucursal = @idsucursal"
+
+
+                cmd.ExecuteNonQuery()
+                err = "Datos actualizados."
+            End If
+            rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        End If
+        Return err
+    End Function
+    Public Function eliminarConfiSucursales(ByVal idsucursal As Integer) As String
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idsucursal FROM Sucursales WHERE idsucursal = @idsucursal", dbC)
+        cmd.Parameters.AddWithValue("idsucursal", idsucursal)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim ee As String
+        If rdr.HasRows Then
+
+            rdr.Close()
+            cmd.CommandText = "DELETE FROM Sucursales WHERE idsucursal = @idsucursal"
+            cmd.ExecuteNonQuery()
+            ee = "Eliminado."
+        End If
+        rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return ee
+    End Function
+    Public Function gvConfiSucursales() As DataTable
+        Dim dt As New DataTable
+        dt.Columns.Add(New DataColumn("idsucursal", System.Type.GetType("System.Int32")))
+        dt.Columns.Add(New DataColumn("sucursal", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("prorrateo", System.Type.GetType("System.String")))
+
+        Dim r As DataRow
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+
+        Dim cmd As New SqlCommand("SELECT idsucursal, sucursal, prorrateo FROM Sucursales  ORDER BY sucursal", dbC)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        While rdr.Read
+            r = dt.NewRow
+
+            r(0) = rdr("idsucursal").ToString
+            r(1) = rdr("sucursal").ToString
+            r(2) = rdr("prorrateo").ToString
+
+            dt.Rows.Add(r)
+        End While
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+
+        Return dt
+    End Function
+
+    'ConfiIncidencias
+    Public Function datosConfiIncidencias(ByVal idincidencia As Integer) As String()
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idincidencia, incidencia FROM Incidencias WHERE idincidencia = @idincidencia", dbC)
+        cmd.Parameters.AddWithValue("idincidencia", idincidencia)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim dsP As String()
+        If rdr.Read Then
+            ReDim dsP(2)
+            dsP(0) = rdr("idincidencia").ToString
+            dsP(1) = rdr("incidencia").ToString
+
+
+        Else
+            ReDim dsP(0) : dsP(0) = "Error: no se encuentra."
+        End If
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return dsP
+    End Function
+    Public Function agregarConfiIncidencias(ByVal incidencia As String) As String()
+        Dim ans() As String
+        If incidencia <> "" Then
+            Dim dbC As New SqlConnection(StarTconnStr)
+            dbC.Open()
+            Dim cmd As New SqlCommand("SELECT incidencia FROM Incidencias WHERE incidencia = @incidencia", dbC)
+            cmd.Parameters.AddWithValue("incidencia", incidencia)
+            Dim rdr As SqlDataReader = cmd.ExecuteReader
+            If rdr.HasRows Then
+                ReDim ans(0)
+                ans(0) = "Error: no se puede agregar, ya existe."
+                rdr.Close()
+            Else
+                rdr.Close()
+                cmd.CommandText = "insert into Incidencias (incidencia) values('" & incidencia & "')"
+
+                cmd.ExecuteNonQuery()
+                cmd.CommandText = "SELECT idincidencia FROM Incidencias WHERE incidencia = @incidencia"
+                rdr = cmd.ExecuteReader
+                rdr.Read()
+                ReDim ans(1)
+                ans(0) = "Agregado."
+                ans(1) = rdr("idincidencia").ToString
+                rdr.Close()
+            End If
+            rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Else
+            ReDim ans(0)
+            ans(0) = "Error: no se puede agregar, es necesario capturar."
+        End If
+        Return ans
+    End Function
+    Public Function actualizarConfiIncidencias(ByVal idincidencia As Integer,
+                                           ByVal incidencia As String) As String
+
+        Dim err As String
+        If incidencia = "" Then
+            err = "Error: no se actualizó, es necesario capturar."
+        Else
+            Dim dbC As New SqlConnection(StarTconnStr)
+            dbC.Open()
+            Dim cmd As New SqlCommand("SELECT idincidencia FROM Incidencias WHERE incidencia = @incidencia AND idincidencia <> @idincidencia", dbC)
+            cmd.Parameters.AddWithValue("incidencia", incidencia)
+            cmd.Parameters.AddWithValue("idincidencia", idincidencia)
+            Dim rdr As SqlDataReader = cmd.ExecuteReader
+            If rdr.HasRows Then
+                rdr.Close()
+                err = "Error: no se actualizó, ya existe."
+            Else
+                rdr.Close()
+                cmd.CommandText = "UPDATE Incidencias SET incidencia = @incidencia WHERE idincidencia = @idincidencia"
+
+
+                cmd.ExecuteNonQuery()
+                err = "Datos actualizados."
+            End If
+            rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        End If
+        Return err
+    End Function
+    Public Function eliminarConfiIncidencias(ByVal idincidencia As Integer) As String
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idincidencia FROM Incidencias WHERE idincidencia = @idincidencia", dbC)
+        cmd.Parameters.AddWithValue("idincidencia", idincidencia)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim ee As String
+        If rdr.HasRows Then
+
+            rdr.Close()
+            cmd.CommandText = "DELETE FROM Incidencias WHERE idincidencia = @idincidencia"
+            cmd.ExecuteNonQuery()
+            ee = "Eliminado."
+        End If
+        rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return ee
+    End Function
+    Public Function gvConfiIncidencias() As DataTable
+        Dim dt As New DataTable
+        dt.Columns.Add(New DataColumn("idincidencia", System.Type.GetType("System.Int32")))
+        dt.Columns.Add(New DataColumn("incidencia", System.Type.GetType("System.String")))
+
+
+        Dim r As DataRow
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+
+        Dim cmd As New SqlCommand("SELECT idincidencia, incidencia FROM Incidencias  ORDER BY incidencia", dbC)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        While rdr.Read
+            r = dt.NewRow
+
+            r(0) = rdr("idincidencia").ToString
+            r(1) = rdr("incidencia").ToString
+
+
+            dt.Rows.Add(r)
+        End While
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+
+        Return dt
+    End Function
+
+    'ConfiDiscrepancia
+    Public Function datosConfiDiscrepancia(ByVal iddiscrepancia As Integer) As String()
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT iddiscrepancia, discrepancia FROM Discrepancias WHERE iddiscrepancia = @iddiscrepancia", dbC)
+        cmd.Parameters.AddWithValue("iddiscrepancia", iddiscrepancia)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim dsP As String()
+        If rdr.Read Then
+            ReDim dsP(2)
+            dsP(0) = rdr("iddiscrepancia").ToString
+            dsP(1) = rdr("discrepancia").ToString
+
+
+        Else
+            ReDim dsP(0) : dsP(0) = "Error: no se encuentra."
+        End If
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return dsP
+    End Function
+    Public Function agregarConfiDiscrepancia(ByVal discrepancia As String) As String()
+        Dim ans() As String
+        If discrepancia <> "" Then
+            Dim dbC As New SqlConnection(StarTconnStr)
+            dbC.Open()
+            Dim cmd As New SqlCommand("SELECT discrepancia FROM Discrepancias WHERE discrepancia = @discrepancia", dbC)
+            cmd.Parameters.AddWithValue("discrepancia", discrepancia)
+            Dim rdr As SqlDataReader = cmd.ExecuteReader
+            If rdr.HasRows Then
+                ReDim ans(0)
+                ans(0) = "Error: no se puede agregar, ya existe."
+                rdr.Close()
+            Else
+                rdr.Close()
+                cmd.CommandText = "insert into Discrepancias (discrepancia) values('" & discrepancia & "')"
+
+                cmd.ExecuteNonQuery()
+                cmd.CommandText = "SELECT iddiscrepancia FROM Discrepancias WHERE discrepancia = @discrepancia"
+                rdr = cmd.ExecuteReader
+                rdr.Read()
+                ReDim ans(1)
+                ans(0) = "Agregado."
+                ans(1) = rdr("iddiscrepancia").ToString
+                rdr.Close()
+            End If
+            rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Else
+            ReDim ans(0)
+            ans(0) = "Error: no se puede agregar, es necesario capturar."
+        End If
+        Return ans
+    End Function
+    Public Function actualizarConfiDiscrepancia(ByVal iddiscrepancia As Integer,
+                                           ByVal discrepancia As String) As String
+
+        Dim err As String
+        If discrepancia = "" Then
+            err = "Error: no se actualizó, es necesario capturar."
+        Else
+            Dim dbC As New SqlConnection(StarTconnStr)
+            dbC.Open()
+            Dim cmd As New SqlCommand("SELECT iddiscrepancia FROM Discrepancias WHERE discrepancia = @discrepancia AND iddiscrepancia <> @iddiscrepancia", dbC)
+            cmd.Parameters.AddWithValue("discrepancia", discrepancia)
+            cmd.Parameters.AddWithValue("iddiscrepancia", iddiscrepancia)
+            Dim rdr As SqlDataReader = cmd.ExecuteReader
+            If rdr.HasRows Then
+                rdr.Close()
+                err = "Error: no se actualizó, ya existe."
+            Else
+                rdr.Close()
+                cmd.CommandText = "UPDATE Discrepancias SET discrepancia = @discrepancia WHERE iddiscrepancia = @iddiscrepancia"
+
+
+                cmd.ExecuteNonQuery()
+                err = "Datos actualizados."
+            End If
+            rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        End If
+        Return err
+    End Function
+    Public Function eliminarConfiDiscrepancia(ByVal iddiscrepancia As Integer) As String
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT iddiscrepancia FROM Discrepancias WHERE iddiscrepancia = @iddiscrepancia", dbC)
+        cmd.Parameters.AddWithValue("iddiscrepancia", iddiscrepancia)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim ee As String
+        If rdr.HasRows Then
+
+            rdr.Close()
+            cmd.CommandText = "DELETE FROM Discrepancias WHERE iddiscrepancia = @iddiscrepancia"
+            cmd.ExecuteNonQuery()
+            ee = "Eliminado."
+        End If
+        rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return ee
+    End Function
+    Public Function gvConfiDiscrepancias() As DataTable
+        Dim dt As New DataTable
+        dt.Columns.Add(New DataColumn("iddiscrepancia", System.Type.GetType("System.Int32")))
+        dt.Columns.Add(New DataColumn("discrepancia", System.Type.GetType("System.String")))
+
+
+        Dim r As DataRow
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+
+        Dim cmd As New SqlCommand("SELECT iddiscrepancia, discrepancia FROM Discrepancias  ORDER BY discrepancia", dbC)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        While rdr.Read
+            r = dt.NewRow
+
+            r(0) = rdr("iddiscrepancia").ToString
+            r(1) = rdr("discrepancia").ToString
+
+
+            dt.Rows.Add(r)
+        End While
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+
+        Return dt
+    End Function
+
 End Class
 
