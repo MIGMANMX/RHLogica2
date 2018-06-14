@@ -25,6 +25,30 @@ Public Class ctiWUC
         rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
         Return lista
     End Function
+    Public Function wucClaseA() As SortedList
+        Dim lista As New SortedList
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idclase, clase FROM ClasesA ORDER BY clase", dbC)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        While rdr.Read
+            lista.Add(rdr("clase").ToString, rdr("idclase").ToString)
+        End While
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return lista
+    End Function
+    Public Function wucEquipActivo() As SortedList
+        Dim lista As New SortedList
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idactivo, activo FROM Activos ORDER BY activo", dbC)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        While rdr.Read
+            lista.Add(rdr("activo").ToString, rdr("idactivo").ToString)
+        End While
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return lista
+    End Function
     Public Function wucClasesCC() As SortedList
         Dim lista As New SortedList
         Dim dbC As New SqlConnection(StarTconnStr)

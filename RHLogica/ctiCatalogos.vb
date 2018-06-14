@@ -2365,5 +2365,378 @@ Public Class ctiCatalogos
         Return dt
     End Function
 
+    'EquipClase
+    Public Function datosEquipClase(ByVal idclase As Integer) As String()
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idclase, clase FROM ClasesA WHERE idclase = @idclase", dbC)
+        cmd.Parameters.AddWithValue("idclase", idclase)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim dsP As String()
+        If rdr.Read Then
+            ReDim dsP(2)
+            dsP(0) = rdr("idclase").ToString
+            dsP(1) = rdr("clase").ToString
+
+
+        Else
+            ReDim dsP(0) : dsP(0) = "Error: no se encuentra."
+        End If
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return dsP
+    End Function
+    Public Function agregarEquipClase(ByVal clase As String) As String()
+        Dim ans() As String
+        If clase <> "" Then
+            Dim dbC As New SqlConnection(StarTconnStr)
+            dbC.Open()
+            Dim cmd As New SqlCommand("SELECT clase FROM ClasesA WHERE clase = @clase", dbC)
+            cmd.Parameters.AddWithValue("clase", clase)
+            Dim rdr As SqlDataReader = cmd.ExecuteReader
+            If rdr.HasRows Then
+                ReDim ans(0)
+                ans(0) = "Error: no se puede agregar, ya existe."
+                rdr.Close()
+            Else
+                rdr.Close()
+                cmd.CommandText = "insert into ClasesA (clase) values('" & clase & "')"
+
+                cmd.ExecuteNonQuery()
+                cmd.CommandText = "SELECT idclase FROM ClasesA WHERE clase = @clase"
+                rdr = cmd.ExecuteReader
+                rdr.Read()
+                ReDim ans(1)
+                ans(0) = "Agregado."
+                ans(1) = rdr("idclase").ToString
+                rdr.Close()
+            End If
+            rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Else
+            ReDim ans(0)
+            ans(0) = "Error: no se puede agregar, es necesario capturar."
+        End If
+        Return ans
+    End Function
+    Public Function actualizarEquipClase(ByVal idclase As Integer,
+                                           ByVal clase As String) As String
+
+        Dim err As String
+        If clase = "" Then
+            err = "Error: no se actualizó, es necesario capturar."
+        Else
+            Dim dbC As New SqlConnection(StarTconnStr)
+            dbC.Open()
+            Dim cmd As New SqlCommand("SELECT idclase FROM ClasesA WHERE clase = @clase AND idclase <> @idclase", dbC)
+            cmd.Parameters.AddWithValue("clase", clase)
+            cmd.Parameters.AddWithValue("idclase", idclase)
+            Dim rdr As SqlDataReader = cmd.ExecuteReader
+            If rdr.HasRows Then
+                rdr.Close()
+                err = "Error: no se actualizó, ya existe."
+            Else
+                rdr.Close()
+                cmd.CommandText = "UPDATE ClasesA SET clase = @clase WHERE idclase = @idclase"
+
+
+                cmd.ExecuteNonQuery()
+                err = "Datos actualizados."
+            End If
+            rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        End If
+        Return err
+    End Function
+    Public Function eliminarEquipClase(ByVal idclase As Integer) As String
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idclase FROM ClasesA WHERE idclase = @idclase", dbC)
+        cmd.Parameters.AddWithValue("idclase", idclase)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim ee As String
+        If rdr.HasRows Then
+
+            rdr.Close()
+            cmd.CommandText = "DELETE FROM ClasesA WHERE idclase = @idclase"
+            cmd.ExecuteNonQuery()
+            ee = "Eliminado."
+        End If
+        rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return ee
+    End Function
+    Public Function gvEquipClase() As DataTable
+        Dim dt As New DataTable
+        dt.Columns.Add(New DataColumn("idclase", System.Type.GetType("System.Int32")))
+        dt.Columns.Add(New DataColumn("clase", System.Type.GetType("System.String")))
+
+
+        Dim r As DataRow
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+
+        Dim cmd As New SqlCommand("SELECT idclase, clase FROM ClasesA  ORDER BY clase", dbC)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        While rdr.Read
+            r = dt.NewRow
+
+            r(0) = rdr("idclase").ToString
+            r(1) = rdr("clase").ToString
+
+
+            dt.Rows.Add(r)
+        End While
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+
+        Return dt
+    End Function
+
+    'EquipActivo
+    Public Function datosEquipActivo(ByVal idactivo As Integer) As String()
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idactivo, activo, idclase FROM Activos WHERE idactivo = @idactivo", dbC)
+        cmd.Parameters.AddWithValue("idactivo", idactivo)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim dsP As String()
+        If rdr.Read Then
+            ReDim dsP(2)
+            dsP(0) = rdr("idactivo").ToString
+            dsP(1) = rdr("activo").ToString
+            dsP(2) = rdr("idclase").ToString
+
+
+        Else
+            ReDim dsP(0) : dsP(0) = "Error: no se encuentra."
+        End If
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return dsP
+    End Function
+    Public Function agregarEquipActivo(ByVal activo As String, ByVal idclase As Integer) As String()
+        Dim ans() As String
+        If activo <> "" Then
+            Dim dbC As New SqlConnection(StarTconnStr)
+            dbC.Open()
+            Dim cmd As New SqlCommand("SELECT activo FROM Activos WHERE activo = @activo", dbC)
+            cmd.Parameters.AddWithValue("activo", activo)
+            Dim rdr As SqlDataReader = cmd.ExecuteReader
+            If rdr.HasRows Then
+                ReDim ans(0)
+                ans(0) = "Error: no se puede agregar, ya existe."
+                rdr.Close()
+            Else
+                rdr.Close()
+                cmd.CommandText = "insert into Activos (activo,idclase) values('" & activo & "','" & idclase & "')"
+
+                cmd.ExecuteNonQuery()
+                cmd.CommandText = "SELECT idactivo FROM Activos WHERE activo = @activo"
+                rdr = cmd.ExecuteReader
+                rdr.Read()
+                ReDim ans(1)
+                ans(0) = "Agregado."
+                ans(1) = rdr("idactivo").ToString
+                rdr.Close()
+            End If
+            rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Else
+            ReDim ans(0)
+            ans(0) = "Error: no se puede agregar, es necesario capturar."
+        End If
+        Return ans
+    End Function
+    Public Function actualizarEquipActivo(ByVal idactivo As Integer, ByVal activo As String,
+                                           ByVal idclase As Integer) As String
+
+        Dim err As String
+        If activo = "" Then
+            err = "Error: no se actualizó, es necesario capturar."
+        Else
+            Dim dbC As New SqlConnection(StarTconnStr)
+            dbC.Open()
+            Dim cmd As New SqlCommand("SELECT idactivo FROM Activos WHERE activo = @activo AND idactivo <> @idactivo", dbC)
+            cmd.Parameters.AddWithValue("activo", activo)
+            cmd.Parameters.AddWithValue("idclase", idclase)
+            cmd.Parameters.AddWithValue("idactivo", idactivo)
+            Dim rdr As SqlDataReader = cmd.ExecuteReader
+            If rdr.HasRows Then
+                rdr.Close()
+                err = "Error: no se actualizó, ya existe."
+            Else
+                rdr.Close()
+                cmd.CommandText = "UPDATE Activos SET activo = @activo, idclase = @idclase  WHERE idactivo = @idactivo"
+
+
+                cmd.ExecuteNonQuery()
+                err = "Datos actualizados."
+            End If
+            rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        End If
+        Return err
+    End Function
+    Public Function eliminarEquipActivo(ByVal idactivo As Integer) As String
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idactivo FROM Activos WHERE idactivo = @idactivo", dbC)
+        cmd.Parameters.AddWithValue("idactivo", idactivo)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim ee As String
+        If rdr.HasRows Then
+
+            rdr.Close()
+            cmd.CommandText = "DELETE FROM Activos WHERE idactivo = @idactivo"
+            cmd.ExecuteNonQuery()
+            ee = "Eliminado."
+        End If
+        rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return ee
+    End Function
+    Public Function gvEquipActivo() As DataTable
+        Dim dt As New DataTable
+        dt.Columns.Add(New DataColumn("idactivo", System.Type.GetType("System.Int32")))
+        dt.Columns.Add(New DataColumn("activo", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("clase", System.Type.GetType("System.String")))
+
+        Dim r As DataRow
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+
+        Dim cmd As New SqlCommand("SELECT idactivo, activo, clase FROM vm_EquipActivo  ORDER BY activo", dbC)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        While rdr.Read
+            r = dt.NewRow
+
+            r(0) = rdr("idactivo").ToString
+            r(1) = rdr("activo").ToString
+            r(2) = rdr("clase").ToString
+
+            dt.Rows.Add(r)
+        End While
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+
+        Return dt
+    End Function
+
+    'EquipRefac
+    Public Function datosEquipRefac(ByVal idrefacc As Integer) As String()
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idrefacc, refacc, idactivo FROM Refacciones WHERE idrefacc = @idrefacc", dbC)
+        cmd.Parameters.AddWithValue("idrefacc", idrefacc)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim dsP As String()
+        If rdr.Read Then
+            ReDim dsP(2)
+            dsP(0) = rdr("idrefacc").ToString
+            dsP(1) = rdr("refacc").ToString
+            dsP(2) = rdr("idactivo").ToString
+
+
+        Else
+            ReDim dsP(0) : dsP(0) = "Error: no se encuentra."
+        End If
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return dsP
+    End Function
+    Public Function agregarEquipRefac(ByVal refacc As String, ByVal idactivo As Integer) As String()
+        Dim ans() As String
+        If refacc <> "" Then
+            Dim dbC As New SqlConnection(StarTconnStr)
+            dbC.Open()
+            Dim cmd As New SqlCommand("SELECT refacc FROM Refacciones WHERE refacc = @refacc", dbC)
+            cmd.Parameters.AddWithValue("refacc", refacc)
+            Dim rdr As SqlDataReader = cmd.ExecuteReader
+            If rdr.HasRows Then
+                ReDim ans(0)
+                ans(0) = "Error: no se puede agregar, ya existe."
+                rdr.Close()
+            Else
+                rdr.Close()
+                cmd.CommandText = "insert into Refacciones (refacc,idactivo) values('" & refacc & "','" & idactivo & "')"
+
+                cmd.ExecuteNonQuery()
+                cmd.CommandText = "SELECT idrefacc FROM Refacciones WHERE refacc = @refacc"
+                rdr = cmd.ExecuteReader
+                rdr.Read()
+                ReDim ans(1)
+                ans(0) = "Agregado."
+                ans(1) = rdr("idrefacc").ToString
+                rdr.Close()
+            End If
+            rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Else
+            ReDim ans(0)
+            ans(0) = "Error: no se puede agregar, es necesario capturar."
+        End If
+        Return ans
+    End Function
+    Public Function actualizarEquipRefac(ByVal idrefacc As Integer, ByVal refacc As String,
+                                           ByVal idactivo As Integer) As String
+
+        Dim err As String
+        If refacc = "" Then
+            err = "Error: no se actualizó, es necesario capturar."
+        Else
+            Dim dbC As New SqlConnection(StarTconnStr)
+            dbC.Open()
+            Dim cmd As New SqlCommand("SELECT idrefacc FROM Refacciones WHERE refacc = @refacc AND idrefacc <> @idrefacc", dbC)
+            cmd.Parameters.AddWithValue("refacc", refacc)
+            cmd.Parameters.AddWithValue("idrefacc", idrefacc)
+            cmd.Parameters.AddWithValue("idactivo", idactivo)
+            Dim rdr As SqlDataReader = cmd.ExecuteReader
+            If rdr.HasRows Then
+                rdr.Close()
+                err = "Error: no se actualizó, ya existe."
+            Else
+                rdr.Close()
+                cmd.CommandText = "UPDATE Refacciones SET refacc = @refacc, idactivo = @idactivo  WHERE idrefacc = @idrefacc"
+
+
+                cmd.ExecuteNonQuery()
+                err = "Datos actualizados."
+            End If
+            rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        End If
+        Return err
+    End Function
+    Public Function eliminarEquipRefac(ByVal idrefacc As Integer) As String
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+        Dim cmd As New SqlCommand("SELECT idrefacc FROM Refacciones WHERE idrefacc = @idrefacc", dbC)
+        cmd.Parameters.AddWithValue("idrefacc", idrefacc)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        Dim ee As String
+        If rdr.HasRows Then
+
+            rdr.Close()
+            cmd.CommandText = "DELETE FROM Refacciones WHERE idrefacc = @idrefacc"
+            cmd.ExecuteNonQuery()
+            ee = "Eliminado."
+        End If
+        rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+        Return ee
+    End Function
+    Public Function gvEquipRefac() As DataTable
+        Dim dt As New DataTable
+        dt.Columns.Add(New DataColumn("idrefacc", System.Type.GetType("System.Int32")))
+        dt.Columns.Add(New DataColumn("refacc", System.Type.GetType("System.String")))
+        dt.Columns.Add(New DataColumn("activo", System.Type.GetType("System.String")))
+
+        Dim r As DataRow
+        Dim dbC As New SqlConnection(StarTconnStr)
+        dbC.Open()
+
+        Dim cmd As New SqlCommand("SELECT idrefacc, refacc, activo FROM vm_EquipRefac  ORDER BY refacc", dbC)
+        Dim rdr As SqlDataReader = cmd.ExecuteReader
+        While rdr.Read
+            r = dt.NewRow
+
+            r(0) = rdr("idrefacc").ToString
+            r(1) = rdr("refacc").ToString
+            r(2) = rdr("activo").ToString
+
+            dt.Rows.Add(r)
+        End While
+        rdr.Close() : rdr = Nothing : cmd.Dispose() : dbC.Close() : dbC.Dispose()
+
+        Return dt
+    End Function
+
 End Class
 
