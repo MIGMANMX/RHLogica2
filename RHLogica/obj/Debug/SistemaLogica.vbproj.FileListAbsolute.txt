@@ -4,3 +4,4 @@ C:\StarSistema\SistemaLogica\RHLogica\obj\Debug\SistemaLogica.Resources.resource
 C:\StarSistema\SistemaLogica\RHLogica\obj\Debug\SistemaLogica.vbproj.GenerateResource.Cache
 C:\StarSistema\SistemaLogica\RHLogica\obj\Debug\SistemaLogica.dll
 C:\StarSistema\SistemaLogica\RHLogica\obj\Debug\SistemaLogica.pdb
+C:\StarSistema\SistemaLogica\RHLogica\obj\Debug\SistemaLogica.vbprojResolveAssemblyReference.cache

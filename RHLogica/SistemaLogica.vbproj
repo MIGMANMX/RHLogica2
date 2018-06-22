@@ -67,6 +67,7 @@
     <Compile Include="ctiAdmin.vb" />
     <Compile Include="ctiCatalogos.vb" />
     <Compile Include="ctiStarT.vb" />
+    <Compile Include="ctiVentas.vb" />
     <Compile Include="ctiWUC.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
